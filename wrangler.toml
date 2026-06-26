@@ -1,4 +1,4 @@
-﻿name = "secondhand-safe-trade-api"
+name = "secondhand-safe-trade-api"
 account_id = "6558ce939bc4a9874939ad2bdcc333bf"
 main = "src/worker.js"
 compatibility_date = "2026-06-26"
@@ -15,3 +15,10 @@ database_id = "2d0d88f5-7bf3-4748-8000-46541dc7758e"
 [vars]
 APP_ENV = "production"
 ALLOWED_ORIGIN = "*"
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true
