@@ -1,9 +1,14 @@
 ﻿# 二手安心交易
 
-二手安心交易是一個針對 FB 社團、LINE 群、面交與二手小額買賣的 MVP。目標不是取代大型交易平台，而是用一個低門檻交易連結，把商品條件、付款鎖定、出貨留證、驗收期限、爭議紀錄與使用者回饋整理清楚。
+二手安心交易是一個針對 FB 社團、LINE 群、面交與二手小額買賣的 MVP。目標不是取代大型交易平台，而是用一個低門檻交易連結，把商品條件、出貨留證、驗收期限、物流紀錄、面交安全與使用者回饋整理清楚。
 
 正式站：`https://secondhand-safe-trade-api.smartmmmoney.workers.dev`
 GitHub Pages 備援展示：`https://hsintiger.github.io/secondhand-trust-link/`
+
+
+## Agent handoff
+
+- `AGENT_HANDOFF.md`：後續 agent 接手總文件，包含線上環境、架構、API、策略文件、風險邊界、部署與下一步優先任務。
 
 ## MVP scope
 
