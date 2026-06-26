@@ -1,3 +1,4 @@
+document.documentElement.classList.add('js-enabled');
 ﻿const form = document.querySelector('#dealForm');
 const previewBox = document.querySelector('#previewBox');
 
@@ -155,3 +156,19 @@ document.addEventListener('click', async (event) => {
     prompt('請手動複製連結', button.dataset.copy);
   }
 });
+
+
+const revealTargets = document.querySelectorAll('.reveal, .reveal-group > article');
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    }
+  }, { threshold: 0.12 });
+  revealTargets.forEach((target) => observer.observe(target));
+} else {
+  revealTargets.forEach((target) => target.classList.add('is-visible'));
+}

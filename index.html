@@ -15,8 +15,8 @@
         <a href="#questions">痛點</a>
         <a href="#flow">流程</a>
         <a href="#meetup">面交</a>
-        <a href="#chain">付款保障</a>
-        <a href="#demo">建立連結</a>
+        <a href="#chain">流程保障</a>
+        <a class="nav-cta" href="#demo">建立連結</a>
       </div>
     </nav>
   </header>
@@ -25,25 +25,28 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">給 FB 社團、LINE 群、代購與二手交易</p>
-        <h1>私下買賣，加一把安心鎖。</h1>
-        <p class="lead">二手安心交易是一個二手交易流程紀錄連結：先寫清楚商品狀況、約定金額、出貨期限、驗收期限與爭議紀錄，降低私下交易各說各話。</p>
+        <h1>私下買賣，不要只靠人品。</h1>
+        <p class="lead">把商品狀況、約定金額、出貨期限、驗收期限與爭議紀錄整理成一條交易條件連結。適合二手 3C、相機鏡頭、面交與 LINE 代購。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#demo">試做一筆交易</a>
-          <a class="button secondary" href="#questions">看常見問題</a>
+          <a class="button primary" href="#demo">免費建立一筆</a>
+          <a class="button secondary" href="#flow">看交易流程範例</a>
         </div>
         <div class="trust-row" aria-label="產品承諾">
-          <span>不收款</span><span>不保管資金</span><span>不保證交易</span><span>先收市場回饋</span>
+          <span>流程留證</span><span>條件先確認</span><span>不碰資金</span><span>不用註冊先試</span>
+        </div>
+        <div class="hero-proof" aria-label="適合情境">
+          <span>二手 iPhone</span><span>相機鏡頭</span><span>LINE 代購</span>
         </div>
       </div>
-      <aside class="status-card mascot-card" aria-label="交易狀態示意">
+      <aside class="status-card mascot-card hero-card" aria-label="交易狀態示意">
         <div class="mascot-stage">
           <img src="./assets/xiao-an.webp" alt="小安，二手安心交易的交易小幫手" />
         </div>
         <div class="card-head">
-          <span class="pill success">小安提醒</span>
-          <strong>二手相機鏡頭</strong>
+          <span class="pill success">買方會看到</span>
+          <strong>商品、期限、證據</strong>
         </div>
-        <p class="mascot-copy">先講清楚條件，再出貨留證、驗收確認、留下紀錄。</p>
+        <p class="mascot-copy">小安不碰你的錢，只幫雙方把交易條件與證據流程講清楚。</p>
         <div class="amount">約定 NT$3,800</div>
         <ol class="timeline">
           <li class="done">交易建立</li>
@@ -55,12 +58,25 @@
       </aside>
     </section>
 
+    <section id="use-cases" class="section use-cases">
+      <div class="section-title center-title reveal">
+        <p class="eyebrow">先打中最痛的族群</p>
+        <h2>不是通用賣場，是私下交易的安全流程小工具。</h2>
+        <p>先服務高單價、容易爭議、私訊成本高的交易。這些人才會在第一天就感覺到價值。</p>
+      </div>
+      <div class="grid use-case-grid">
+        <article class="use-card reveal"><span>01</span><h3>二手 3C / 相機賣家</h3><p>序號、外觀瑕疵、保固、驗收期限先寫清楚，減少買方收貨後各說各話。</p></article>
+        <article class="use-card reveal"><span>02</span><h3>LINE 代購 / 小賣家</h3><p>把付款證明、出貨時程、不取貨處理集中在同一條連結，不再翻聊天紀錄。</p></article>
+        <article class="use-card reveal"><span>03</span><h3>FB / LINE 社群管理者</h3><p>提供一套群內建議流程，降低詐騙糾紛與管理壓力，但不碰會員金流。</p></article>
+      </div>
+    </section>
+
     <section id="questions" class="section">
       <div class="section-title">
         <p class="eyebrow">對標傳統交易平台，但更輕</p>
         <h2>私下交易常見問題，一開始就寫進流程。</h2>
       </div>
-      <div class="grid problem-grid">
+      <div class="grid problem-grid reveal-group">
         <article><h3>賣家收錢不出貨？</h3><p>先把付款方式、付款證明與逾期處理寫進交易條件，不再只靠口頭承諾。</p></article>
         <article><h3>買家不取貨怎麼辦？</h3><p>可設定保證金、出貨期限與不取貨補償，降低賣家白付物流成本。</p></article>
         <article><h3>收到假貨或瑕疵品？</h3><p>驗收期內可提出爭議，上傳開箱照片、影片、序號與聊天紀錄。</p></article>
@@ -77,7 +93,7 @@
         <p class="eyebrow">不是賣場，是安全流程</p>
         <h2>一個連結，保護一筆私下交易。</h2>
       </div>
-      <div class="grid steps">
+      <div class="grid steps flow-steps reveal-group">
         <article><span>1</span><h3>賣方開連結</h3><p>填商品、金額、出貨期限、驗收期與退貨規則。</p></article>
         <article><span>2</span><h3>雙方確認條件</h3><p>先確認付款方式、付款證明、出貨期限與取消規則；MVP 不代收款。</p></article>
         <article><span>3</span><h3>賣方出貨留證</h3><p>上傳物流單、包裝照片、序號或出貨影片。</p></article>
@@ -109,6 +125,30 @@
       </div>
     </section>
 
+    <section id="demo" class="section demo-section">
+      <div class="section-title">
+        <p class="eyebrow">MVP Demo</p>
+        <h2>30 秒建立一筆交易條件連結。</h2>
+        <p>目前不收款、不保管資金，只產生雙方看得懂的流程與證據時間線。</p>
+      </div>
+      <div class="demo-grid">
+        <form id="dealForm" class="deal-form">
+          <label>商品名稱<input name="item" value="二手 iPhone 15 128G" required /></label>
+          <label>約定金額<input name="amount" type="number" min="1" step="0.01" value="260" required /></label>
+          <label>出貨期限<select name="shipBy"><option>24 小時內</option><option selected>48 小時內</option><option>3 天內</option></select></label>
+          <label>驗收期<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
+          <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>數位交付</option></select></label>
+          <button class="button primary" type="submit">產生預覽</button>
+        </form>
+        <aside class="preview sticky-preview" aria-live="polite">
+          <h3>交易連結預覽</h3>
+          <div id="previewBox"></div>
+        </aside>
+      </div>
+    </section>
+
+
+
     <section id="chain" class="section split chain-section">
       <div>
         <p class="eyebrow">流程保障白話化</p>
@@ -136,33 +176,25 @@
       </ul>
     </section>
 
-    <section id="demo" class="section demo-section">
-      <div class="section-title">
-        <p class="eyebrow">MVP Demo</p>
-        <h2>建立一筆安全交易連結。</h2>
+    <section id="market-test" class="section market-test split">
+      <div class="reveal">
+        <p class="eyebrow">MVP 市場測試</p>
+        <h2>接下來 7 天，只追真實使用訊號。</h2>
+        <p>不要先做金流、AI 仲裁或大型 SEO。先找到正在交易的人，幫他建立第一條連結，看他敢不敢貼給買方。</p>
       </div>
-      <div class="demo-grid">
-        <form id="dealForm" class="deal-form">
-          <label>商品名稱<input name="item" value="二手 iPhone 15 128G" required /></label>
-          <label>約定金額<input name="amount" type="number" min="1" step="0.01" value="260" required /></label>
-          <label>出貨期限<select name="shipBy"><option>24 小時內</option><option selected>48 小時內</option><option>3 天內</option></select></label>
-          <label>驗收期<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
-          <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>數位交付</option></select></label>
-          <button class="button primary" type="submit">產生預覽</button>
-        </form>
-        <aside class="preview" aria-live="polite">
-          <h3>交易連結預覽</h3>
-          <div id="previewBox"></div>
-        </aside>
+      <div class="test-plan reveal">
+        <div><strong>30</strong><span>私訊目標：20 位賣家 + 10 位群主</span></div>
+        <div><strong>3</strong><span>真實商品建立交易條件連結</span></div>
+        <div><strong>10</strong><span>具體回饋，足以決定下一版</span></div>
       </div>
     </section>
 
 
-    <section id="feedback" class="section split feedback-section">
+    <section id="feedback" class="section split feedback-section final-cta">
       <div>
         <p class="eyebrow">幫我們驗證需求</p>
-        <h2>你會把這個連結丟進 FB / LINE 社團試用嗎？</h2>
-        <p>我們現在不追求大功能，先找真實二手買賣、代購、面交使用情境。留下你的想法，幫我們判斷下一步該做什麼。</p>
+        <h2>你願意用一筆真實交易試試看嗎？</h2>
+        <p>我們現在不追求大功能，先找真實二手買賣、代購、面交使用情境。留下你的想法，或直接拿一筆商品建立連結。</p>
         <div class="share-actions">
           <a class="button secondary" id="lineShare" href="#" target="_blank" rel="noopener">分享到 LINE</a>
           <a class="button secondary" id="fbShare" href="#" target="_blank" rel="noopener">分享到 Facebook</a>
