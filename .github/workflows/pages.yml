@@ -1,11 +1,8 @@
-﻿name: Deploy Secondhand Trust Link MVP
+name: Deploy Secondhand Trust Link MVP
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "secondhand-trust-link/**"
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -27,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload static site
@@ -38,4 +35,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
