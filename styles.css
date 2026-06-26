@@ -118,3 +118,8 @@ input, select { width: 100%; border: 1px solid var(--line); background: white; c
 .risk-box ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); line-height: 1.6; }
 .copy-link { border: 1px solid var(--line); background: #fff; color: var(--green); border-radius: 999px; padding: 7px 12px; font-weight: 850; cursor: pointer; }
 .created-card .share-actions { margin-top: 16px; }
+
+.article-page h1 { font-size: clamp(38px, 5vw, 64px); }
+.article-card { margin: 30px 0; }
+.article-card li { margin: 10px 0; color: var(--muted); line-height: 1.7; }
+.article-cta { align-items: center; }

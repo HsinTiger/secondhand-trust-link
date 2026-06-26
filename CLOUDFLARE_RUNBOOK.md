@@ -1,62 +1,76 @@
 ﻿# 二手安心交易 Cloudflare Runbook
 
-## 需要 owner 配合
+## 已部署資源
 
-1. Cloudflare API Token
-   - 權限：Workers Scripts Edit、D1 Edit、Account Read。
-   - 建議用最小權限 token，不要給 Global API Key。
+- Worker：`secondhand-safe-trade-api`
+- D1：`secondhand-safe-trade-db`
+- 正式站：`https://secondhand-safe-trade-api.smartmmmoney.workers.dev`
+- Account ID：`6558ce939bc4a9874939ad2bdcc333bf`
 
-2. Cloudflare Account ID
-   - 在 Cloudflare Dashboard 右側可看到。
+## GitHub Secrets
 
-3. 建立 D1 database
+目前 GitHub Actions 使用：
 
-```bash
-npx wrangler login
-npx wrangler d1 create secondhand-safe-trade-db
-```
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_FOR_SECOND_HAND`
 
-把輸出的 `database_id` 填入 `wrangler.toml`：
+workflow 內會把 `CLOUDFLARE_API_FOR_SECOND_HAND` 映射成 Wrangler 需要的 `CLOUDFLARE_API_TOKEN`。
 
-```toml
-database_id = "..."
-```
+## Cloudflare GUI 確認
 
-4. 套用 schema
+1. Cloudflare Dashboard → Workers & Pages。
+2. 找 `secondhand-safe-trade-api`。
+3. `Deployments` 可看版本。
+4. `Logs` 可看 invocation logs。
+5. Storage & Databases → D1 → `secondhand-safe-trade-db` 可查資料。
+
+## 本機部署
 
 ```bash
 npm install
 npm run db:remote
-```
-
-5. 部署 Workers + 靜態資產
-
-```bash
 npm run deploy
 ```
 
-## GitHub Secrets
+## GitHub Actions 手動部署
 
-若要 GitHub Actions 自動部署 Cloudflare，新增：
+1. GitHub repo → Actions。
+2. 選 `Deploy to Cloudflare Workers`。
+3. 點 `Run workflow`。
+4. branch 選 `main`。
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
+## Turnstile 預留
+
+Worker 已支援 `TURNSTILE_SECRET_KEY`，但目前沒有設定 secret，所以不會阻擋表單。
+
+若要啟用：
+
+1. Cloudflare Dashboard → Turnstile。
+2. 建立 site，取得 Site Key 與 Secret Key。
+3. Worker secret 設定：
+
+```bash
+npx wrangler secret put TURNSTILE_SECRET_KEY
+```
+
+4. 前端再加入 Turnstile widget，將 token 寫入 `window.turnstileToken`。
+
+## 常用 D1 查詢
+
+```sql
+SELECT created_at, item, amount_usdc, method, status
+FROM deals
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+```sql
+SELECT created_at, role, use_case, willingness, contact, message
+FROM feedback
+ORDER BY created_at DESC
+LIMIT 50;
+```
 
 ## MVP 範圍
 
-目前後端只做交易流程紀錄：
-
-- 建立交易
-- 查交易
-- 賣方標記出貨
-- 買方確認收貨
-- 買方提出爭議
-
-目前不做：
-
-- 真實 escrow
-- 真實 USDC/USDT 收付款
-- KYC
-- 換幣
-- 法幣出入金
-- 平台錢包
+目前只做交易流程紀錄與市場回饋，不做真實 USDC/USDT 收付款、不做 KYC、不做換幣、不做法幣出入金、不做平台錢包。

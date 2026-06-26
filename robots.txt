@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://secondhand-safe-trade-api.smartmmmoney.workers.dev/sitemap.xml

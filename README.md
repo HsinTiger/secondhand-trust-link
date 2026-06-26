@@ -1,53 +1,66 @@
-﻿# Secondhand Trust Link
+﻿# 二手安心交易
 
-Secondhand Trust Link is a static MVP for safer secondhand trading links. It is designed to explain a transaction, highlight seller and buyer safety checks, and share non-custodial guidance without asking either party to hand funds to this project.
+二手安心交易是一個針對 FB 社團、LINE 群、面交與二手小額買賣的 MVP。目標不是取代大型交易平台，而是用一個低門檻交易連結，把商品條件、付款鎖定、出貨留證、驗收期限、爭議紀錄與使用者回饋整理清楚。
+
+正式站：`https://secondhand-safe-trade-api.smartmmmoney.workers.dev`
+GitHub Pages 備援展示：`https://hsintiger.github.io/secondhand-trust-link/`
 
 ## MVP scope
 
-- Static GitHub Pages site only; no backend, database, npm build, or server runtime.
-- Safety-link experience for secondhand transactions: transaction summary, risk reminders, and recommended off-platform verification steps.
-- Educational and coordination layer only; it does not custody assets or settle payments.
-- Open-source friendly documentation so reviewers can inspect copy, deployment settings, and legal boundaries.
+目前版本包含：
+
+- Cloudflare Workers API + static assets。
+- D1 database：交易、事件、回饋、rate limit。
+- 建立交易連結與交易狀態頁。
+- 建立交易後的風險提示：高單價、二手 3C、面交安全提醒。
+- 市場回饋表單：角色、使用情境、願付費訊號、聯絡方式。
+- LINE / Facebook 分享入口。
+- SEO 長尾指南頁、`sitemap.xml`、`robots.txt`。
+- 基本資安防護：安全標頭、輸入驗證、D1 rate limit、Turnstile 預留。
 
 ## Non-custodial boundaries
 
-This project is not an escrow provider, exchange, broker, money transmitter, wallet operator, payment processor, or financial institution.
+此 MVP 目前不處理真實資金，也不是 escrow provider、exchange、broker、money transmitter、wallet operator、payment processor 或金融機構。
 
-The MVP must not:
+目前不做：
 
-- Hold, receive, pool, or control user funds or digital assets.
-- Perform crypto swaps, token exchange, fiat on-ramp, or fiat off-ramp flows.
-- Provide a platform wallet, hosted wallet, managed private key, or recovery service.
-- Promise transaction settlement, chargeback protection, buyer protection, seller protection, or dispute resolution.
-- Present itself as legal, financial, tax, compliance, or investment advice.
+- 保管、接收、池化或控制使用者資金或數位資產。
+- crypto swap、幣幣交換、法幣出入金。
+- 平台錢包、託管私鑰、帳號恢復服務。
+- 自動仲裁、保證退款、保證防詐。
+- 法律、稅務、金融、投資建議。
 
-Users should use their own trusted payment, marketplace, wallet, or in-person verification process. Any transaction decision remains between buyer and seller.
+## Local development
 
-## GitHub Pages deployment
+```bash
+npm install
+npm run dev
+```
 
-This folder is intended to be deployed as a pure static site.
+## Deploy
 
-1. Keep all public static files inside `secondhand-trust-link/`.
-2. Enable GitHub Pages in the repository settings.
-3. Select GitHub Actions as the Pages source.
-4. Use `.github/workflows/pages.yml` to upload `secondhand-trust-link/` as the Pages artifact.
-5. Push changes to `main` or run the workflow manually from the Actions tab.
+Cloudflare：
 
-Important repository-layout note: GitHub only discovers workflows from the repository-root `.github/workflows/` directory. This MVP stores the workflow under `secondhand-trust-link/.github/workflows/pages.yml` to keep the existing parent project untouched. If `secondhand-trust-link/` becomes its own repository, the workflow is already in the correct relative location. If it stays as a subdirectory of a larger repository, copy the workflow to the repository-root `.github/workflows/pages.yml` when the owner approves touching root-level deployment files.
+```bash
+npm run db:remote
+npm run deploy
+```
 
-## No npm required
+GitHub Pages 會由 `.github/workflows/pages.yml` 自動部署 root 靜態檔。
+Cloudflare Workers 可由 `.github/workflows/cloudflare.yml` 手動觸發。
 
-There is no package manager step. Do not add `package.json`, `node_modules/`, bundlers, or generated frontend build folders unless the project scope changes.
+## Key docs
+
+- `CLOUDFLARE_RUNBOOK.md`：Cloudflare GUI/CLI 部署與 secrets。
+- `FEEDBACK_SOP.md`：每週回饋查詢與 Go/No-Go 判斷。
+- `PM_GTM_BRIEF.md`：市場測試與 PM 行銷策略。
+- `TECH_ROADMAP.md`：Escrow、AI 審查、零成本技術路線。
 
 ## Open-source strategy recommendation
 
-- Start with source-available public review if legal positioning is still being validated.
-- Move to a standard permissive license such as MIT or Apache-2.0 only after the owner confirms IP, trademark, and compliance expectations.
-- Keep legal boundary text, risk disclaimers, and deployment workflow in version control so changes are auditable.
-- Accept issues and pull requests for copy clarity, accessibility, and security wording, but avoid accepting features that introduce custody, wallet, exchange, or payment-processing behavior.
-- Consider a small `SECURITY.md` later if the project adds forms, scripts, third-party embeds, or user-submitted content.
+建議 open-core：
 
-## Local preview
+- 可公開：前端、文案、SEO 頁、交易狀態機、法遵邊界、部署流程。
+- 暫不公開：未來仲裁後台、反詐規則細節、金流/VASP 整合、內部營運資料。
 
-Because the MVP is static, open `index.html` directly once a page is added, or serve the folder with any local static-file server. No npm command is required.
-
+原因：透明能建立信任，但完整風控規則若公開，可能被惡意買賣家反向利用。

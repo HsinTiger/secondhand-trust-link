@@ -65,6 +65,20 @@ function id(prefix) {
   return `${prefix}_${token}`;
 }
 
+async function verifyTurnstile(request, env, body) {
+  const secret = String(env.TURNSTILE_SECRET_KEY || '').trim();
+  if (!secret) return null;
+  const token = cleanText(body?.turnstile_token, 2048);
+  if (!token) return json({ error: 'turnstile_required' }, 403, cors(request, env));
+  const formData = new FormData();
+  formData.append('secret', secret);
+  formData.append('response', token);
+  formData.append('remoteip', request.headers.get('cf-connecting-ip') || '');
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: formData });
+  const result = await response.json();
+  return result.success ? null : json({ error: 'turnstile_failed' }, 403, cors(request, env));
+}
+
 async function readJson(request) {
   const contentType = request.headers.get('content-type') || '';
   if (!contentType.toLowerCase().includes('application/json')) return null;
@@ -175,6 +189,8 @@ async function createDeal(request, env) {
 
   const body = await readJson(request);
   if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
+  const turnstileError = await verifyTurnstile(request, env, body);
+  if (turnstileError) return turnstileError;
 
   const item = cleanText(body.item, 120);
   const amount = validateAmount(body.amount_usdc || body.amount);
@@ -230,6 +246,8 @@ async function createFeedback(request, env) {
 
   const body = await readJson(request);
   if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
+  const turnstileError = await verifyTurnstile(request, env, body);
+  if (turnstileError) return turnstileError;
   const message = cleanText(body.message, 1000);
   if (message.length < 4) return json({ error: 'message_required' }, 400, cors(request, env));
 

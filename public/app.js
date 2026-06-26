@@ -14,6 +14,7 @@ function formPayload() {
     ship_by: data.get('shipBy'),
     inspect: data.get('inspect'),
     method: data.get('method'),
+    turnstile_token: window.turnstileToken || '',
   };
 }
 
@@ -119,6 +120,7 @@ if (feedbackForm) {
           willingness: data.get('willingness'),
           contact: data.get('contact'),
           message: data.get('message'),
+          turnstile_token: window.turnstileToken || '',
         }),
       });
       if (!response.ok) throw new Error('feedback_failed');
