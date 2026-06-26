@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #f7f3ea;
   --panel: #fffaf1;
   --ink: #17211b;
@@ -97,3 +97,10 @@ input, select { width: 100%; border: 1px solid var(--line); background: white; c
 .meetup-section { padding-top: 42px; }
 .meetup-rules > div:first-child { border-color: rgba(242, 184, 75, .55); }
 .meetup-rules > div:last-child { border-color: rgba(15, 123, 82, .32); }
+.preview-note { color: var(--muted); line-height: 1.6; margin: 16px 0 0; }
+.deal-page h1 { font-size: clamp(38px, 5vw, 64px); }
+.deal-status-card { max-width: 760px; transform: none; }
+.deal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0; }
+.events-list { display: grid; gap: 10px; }
+.event-row { display: grid; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.event-row span, .event-row small { color: var(--muted); }

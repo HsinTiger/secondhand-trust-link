@@ -1,4 +1,4 @@
-# Secondhand Trust Link
+﻿# Secondhand Trust Link
 
 Secondhand Trust Link is a static MVP for safer secondhand trading links. It is designed to explain a transaction, highlight seller and buyer safety checks, and share non-custodial guidance without asking either party to hand funds to this project.
 
@@ -50,3 +50,4 @@ There is no package manager step. Do not add `package.json`, `node_modules/`, bu
 ## Local preview
 
 Because the MVP is static, open `index.html` directly once a page is added, or serve the folder with any local static-file server. No npm command is required.
+
