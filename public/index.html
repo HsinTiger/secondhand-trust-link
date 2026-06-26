@@ -157,6 +157,42 @@
       </div>
     </section>
 
+
+    <section id="feedback" class="section split feedback-section">
+      <div>
+        <p class="eyebrow">幫我們驗證需求</p>
+        <h2>你會把這個連結丟進 FB / LINE 社團試用嗎？</h2>
+        <p>我們現在不追求大功能，先找真實二手買賣、代購、面交使用情境。留下你的想法，幫我們判斷下一步該做什麼。</p>
+        <div class="share-actions">
+          <a class="button secondary" id="lineShare" href="#" target="_blank" rel="noopener">分享到 LINE</a>
+          <a class="button secondary" id="fbShare" href="#" target="_blank" rel="noopener">分享到 Facebook</a>
+        </div>
+      </div>
+      <form id="feedbackForm" class="deal-form feedback-form">
+        <label>你的角色
+          <select name="role">
+            <option>買家</option>
+            <option>賣家</option>
+            <option>代購/小賣家</option>
+            <option>社團/群組管理者</option>
+          </select>
+        </label>
+        <label>最想解決的交易場景<input name="use_case" placeholder="例如：二手 3C、面交、LINE 代購、模型公仔" /></label>
+        <label>如果真的有用，你願意付多少？
+          <select name="willingness">
+            <option>先免費試用</option>
+            <option>每筆 NT$3-10</option>
+            <option>每筆 0.5%-1%</option>
+            <option>賣家月費 NT$99 以內</option>
+          </select>
+        </label>
+        <label>聯絡方式，可留 LINE / Email<input name="contact" placeholder="選填，方便邀請你試用" /></label>
+        <label>你的建議<textarea name="message" rows="4" required placeholder="你會用在哪種交易？最擔心哪一步？"></textarea></label>
+        <button class="button primary" type="submit">送出回饋</button>
+        <p id="feedbackStatus" class="preview-note" aria-live="polite"></p>
+      </form>
+    </section>
+
     <section id="deploy" class="section split muted">
       <div>
         <p class="eyebrow">開源與上線</p>

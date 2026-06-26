@@ -14,7 +14,7 @@ database_id = "2d0d88f5-7bf3-4748-8000-46541dc7758e"
 
 [vars]
 APP_ENV = "production"
-ALLOWED_ORIGIN = "*"
+ALLOWED_ORIGIN = "https://hsintiger.github.io,https://secondhand-safe-trade-api.smartmmmoney.workers.dev"
 
 [observability]
 enabled = true
