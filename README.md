@@ -87,3 +87,8 @@ Cloudflare Workers 可由 `.github/workflows/cloudflare.yml` 手動觸發。
 - `LOGISTICS_API_DECISION_MEMO.md`：物流自建 vs 統合 API 決策、供應商訪談問題、PoC 門檻。
 - `COMMUNITY_OUTREACH_TEMPLATES.md`：FB/LINE 群主私訊模板、社團貼文、圖卡與 Reels 草案。
 - `META_CONTENT_OPERATING_PLAN.md`：FB / IG / Threads 帳號建立、內容支柱、發文頻率、穩定幣科普邊界。
+
+
+## Identity and meetup safety
+
+- `IDENTITY_SAFETY_STRATEGY.md`：面交安全、可選身分驗證、信任徽章、隱私與公平策略。

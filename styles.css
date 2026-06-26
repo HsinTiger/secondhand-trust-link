@@ -248,3 +248,12 @@ body::after { left: -150px; bottom: 90px; background: radial-gradient(circle, #f
 .package-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .field-note { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; }
 @media (max-width: 560px) { .package-grid { grid-template-columns: 1fr; } }
+
+.identity-safety { background: linear-gradient(135deg, rgba(23,33,27,.96), rgba(15,95,62,.9)); color: #fff; border-radius: 36px; }
+.identity-safety .eyebrow { color: #9ee0bf; }
+.identity-safety p { color: rgba(255,255,255,.72); line-height: 1.75; }
+.identity-levels { display: grid; gap: 12px; }
+.identity-levels div { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 20px; padding: 16px; }
+.identity-levels span { color: #fff0c5; font-weight: 950; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+.identity-levels strong { display: block; margin: 6px 0; font-size: 18px; }
+.identity-levels p { margin: 0; }
