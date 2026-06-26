@@ -70,3 +70,8 @@ Cloudflare Workers 可由 `.github/workflows/cloudflare.yml` 手動觸發。
 
 - `SALES_COMMANDER_PLAYBOOK.md`：零預算冷啟動、人脈拓展、社群貼文、私訊話術。
 - `sales_pipeline.csv`：每日私訊、回覆、下一步追蹤表。
+
+
+## Strategy memo
+
+- `BOSS_PLATFORM_STRATEGY_MEMO.md`：回覆老闆關於傳統電商抽成、賣貨便仲裁弱、USDT/USDC 門檻與我們切入策略的備忘錄。
