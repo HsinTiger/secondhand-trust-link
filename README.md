@@ -64,3 +64,9 @@ Cloudflare Workers 可由 `.github/workflows/cloudflare.yml` 手動觸發。
 - 暫不公開：未來仲裁後台、反詐規則細節、金流/VASP 整合、內部營運資料。
 
 原因：透明能建立信任，但完整風控規則若公開，可能被惡意買賣家反向利用。
+
+
+## Zero-budget sales motion
+
+- `SALES_COMMANDER_PLAYBOOK.md`：零預算冷啟動、人脈拓展、社群貼文、私訊話術。
+- `sales_pipeline.csv`：每日私訊、回覆、下一步追蹤表。
