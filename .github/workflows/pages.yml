@@ -1,4 +1,4 @@
-name: Deploy Secondhand Trust Link MVP
+﻿name: Deploy Secondhand Trust Link MVP
 
 on:
   push:
@@ -33,8 +33,9 @@ jobs:
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: secondhand-trust-link
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
