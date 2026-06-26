@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>二手安心交易｜私下買賣的安全交易連結</title>
-  <meta name="description" content="給 FB、LINE、社群二手買賣用的低費率安全交易連結：付款鎖定、出貨證明、驗收期限、爭議紀錄，全流程可查證。" />
+  <meta name="description" content="給 FB、LINE、社群二手買賣用的低費率安全交易連結：付款鎖定、出貨證明、驗收期限、爭議紀錄，全流程有紀錄。" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -15,7 +15,7 @@
         <a href="#questions">痛點</a>
         <a href="#flow">流程</a>
         <a href="#meetup">面交</a>
-        <a href="#chain">可查證</a>
+        <a href="#chain">付款保障</a>
         <a href="#demo">建立連結</a>
       </div>
     </nav>
@@ -61,7 +61,7 @@
         <article><h3>買家不取貨怎麼辦？</h3><p>可設定保證金、出貨期限與不取貨補償，降低賣家白付物流成本。</p></article>
         <article><h3>收到假貨或瑕疵品？</h3><p>驗收期內可提出爭議，上傳開箱照片、影片、序號與聊天紀錄。</p></article>
         <article><h3>買家故意拖確認？</h3><p>驗收期倒數清楚顯示，逾期未爭議就自動進入撥款。</p></article>
-        <article><h3>雙方各說各話？</h3><p>交易條件、付款、出貨、驗收與爭議事件都有時間戳與證據 hash。</p></article>
+        <article><h3>雙方各說各話？</h3><p>交易條件、付款、出貨、驗收與爭議事件都有時間紀錄與證據摘要。</p></article>
         <article><h3>平台流程太重、抽成太高？</h3><p>先從一個交易連結開始，適合 FB/LINE 社群小額二手交易，不必一開始就承擔完整平台成本。</p></article>
         <article><h3>面交怕危險或尷尬？</h3><p>人煙稀少、臨時改地點、現場殺價或搶奪風險，都可以用事前鎖款與定點交付降低壓力。</p></article>
         <article><h3>I 人不想一直私訊？</h3><p>交易條件、出貨期限、驗收規則都寫在連結裡，少一點拉扯，多一點清楚。</p></article>
@@ -75,7 +75,7 @@
       </div>
       <div class="grid steps">
         <article><span>1</span><h3>賣方開連結</h3><p>填商品、金額、出貨期限、驗收期與退貨規則。</p></article>
-        <article><span>2</span><h3>買方付款鎖定</h3><p>款項進 escrow，不直接到賣方，也不進平台錢包。</p></article>
+        <article><span>2</span><h3>買方付款鎖定</h3><p>款項先鎖定，不直接到賣方，也不由平台任意挪用。</p></article>
         <article><span>3</span><h3>賣方出貨留證</h3><p>上傳物流單、包裝照片、序號或出貨影片。</p></article>
         <article><span>4</span><h3>驗收後撥款</h3><p>買方確認或驗收期到期自動撥款；爭議時凍結。</p></article>
       </div>
@@ -107,15 +107,15 @@
 
     <section id="chain" class="section split chain-section">
       <div>
-        <p class="eyebrow">區塊鏈白話化</p>
-        <h2>不用懂錢包，也能看懂交易進度。</h2>
-        <p>我們不把「Web3」當賣點，而是把鏈上紀錄翻譯成一般人看得懂的狀態：已付款、已出貨、驗收中、爭議中、已撥款。</p>
+        <p class="eyebrow">付款保障白話化</p>
+        <h2>不用懂技術，也能看懂交易進度。</h2>
+        <p>使用者不需要理解底層技術，只需要看到清楚狀態：已付款、已出貨、驗收中、爭議中、已撥款。未來付款可支援 USDC / USDT 等穩定幣。</p>
       </div>
       <div class="chain-card">
-        <div class="chain-row"><span>付款紀錄</span><strong>可查交易 hash</strong></div>
-        <div class="chain-row"><span>證據紀錄</span><strong>照片/影片不上鏈，只上 hash</strong></div>
-        <div class="chain-row"><span>撥款規則</span><strong>合約公開，可審查</strong></div>
-        <div class="chain-row"><span>平台角色</span><strong>不保管用戶私鑰</strong></div>
+        <div class="chain-row"><span>付款紀錄</span><strong>狀態清楚、有時間紀錄</strong></div>
+        <div class="chain-row"><span>證據紀錄</span><strong>照片/影片保留在安全儲存，只公開必要摘要</strong></div>
+        <div class="chain-row"><span>撥款規則</span><strong>先講清楚，到期照規則執行</strong></div>
+        <div class="chain-row"><span>平台角色</span><strong>不做換幣，不做法幣出入金</strong></div>
       </div>
     </section>
 
@@ -156,7 +156,7 @@
     <section id="deploy" class="section split muted">
       <div>
         <p class="eyebrow">開源與上線</p>
-        <h2>先公開前端，核心合約與風控可保留私有。</h2>
+        <h2>先公開前端與流程，核心風控與交易後端可保留私有。</h2>
       </div>
       <ul class="deploy-list">
         <li><strong>GitHub Pages：</strong>放 landing page、demo、文件。</li>
