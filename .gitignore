@@ -1,0 +1,23 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Local-only files
+.env
+.env.*
+*.local
+
+# Static-site generated output, if tooling is added later
+dist/
+build/
+.cache/
+
+# Keep the MVP npm-free
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

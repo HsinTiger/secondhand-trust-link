@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>二手保｜私下交易的安全連結</title>
+  <meta name="description" content="給 FB、LINE、社群二手買賣用的低費率安全交易連結：付款鎖定、出貨證明、驗收期限、爭議紀錄，全流程可查證。" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="#top" aria-label="二手保首頁"><span class="brand-mark">保</span>二手保</a>
+      <div class="nav-links">
+        <a href="#flow">流程</a>
+        <a href="#guardrails">保障</a>
+        <a href="#demo">建立連結</a>
+        <a href="#deploy">上線策略</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">給 FB 社團、LINE 群、代購與二手交易</p>
+        <h1>私下買賣，不再只靠人品。</h1>
+        <p class="lead">二手保是一個低手續費交易安全連結：買方付款先鎖定、賣方安心出貨、驗收期過後自動撥款，證據與流程都可查。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#demo">試做一筆交易</a>
+          <a class="button secondary" href="#flow">看保障流程</a>
+        </div>
+        <div class="trust-row" aria-label="產品承諾">
+          <span>非託管 MVP</span><span>不做換幣</span><span>不碰法幣出入金</span><span>先 0% 手續費</span>
+        </div>
+      </div>
+      <aside class="status-card" aria-label="交易狀態示意">
+        <div class="card-head">
+          <span class="pill success">示範交易</span>
+          <strong>二手相機鏡頭</strong>
+        </div>
+        <div class="amount">USDC 120.00</div>
+        <ol class="timeline">
+          <li class="done">交易建立</li>
+          <li class="done">買方付款鎖定</li>
+          <li class="active">賣方待出貨</li>
+          <li>買方驗收</li>
+          <li>自動撥款</li>
+        </ol>
+      </aside>
+    </section>
+
+    <section id="flow" class="section">
+      <div class="section-title">
+        <p class="eyebrow">不是賣場，是安全流程</p>
+        <h2>一個連結，保護一筆私下交易。</h2>
+      </div>
+      <div class="grid steps">
+        <article><span>1</span><h3>賣方開連結</h3><p>填商品、金額、出貨期限、驗收期與退貨規則。</p></article>
+        <article><span>2</span><h3>買方付款鎖定</h3><p>款項進 escrow，不直接到賣方，也不進平台錢包。</p></article>
+        <article><span>3</span><h3>賣方出貨留證</h3><p>上傳物流單、包裝照片、序號或出貨影片。</p></article>
+        <article><span>4</span><h3>驗收後撥款</h3><p>買方確認或驗收期到期自動撥款；爭議時凍結。</p></article>
+      </div>
+    </section>
+
+    <section id="guardrails" class="section split">
+      <div>
+        <p class="eyebrow">防買賣家作惡</p>
+        <h2>平台不偏買方，也不偏賣方；偏向證據。</h2>
+        <p>誰提供更完整證據，誰取得保護。所有狀態都轉成買賣雙方看得懂的進度條。</p>
+      </div>
+      <div class="rules">
+        <div><h3>防賣方詐騙</h3><ul><li>逾期未出貨可退款</li><li>出貨需留證</li><li>貨不符可爭議</li></ul></div>
+        <div><h3>防買方惡意</h3><ul><li>先鎖款才出貨</li><li>驗收期到自動撥款</li><li>不取貨可扣補償</li></ul></div>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section">
+      <div class="section-title">
+        <p class="eyebrow">MVP Demo</p>
+        <h2>建立一筆安全交易連結。</h2>
+      </div>
+      <div class="demo-grid">
+        <form id="dealForm" class="deal-form">
+          <label>商品名稱<input name="item" value="二手 iPhone 15 128G" required /></label>
+          <label>金額 USDC<input name="amount" type="number" min="1" step="0.01" value="260" required /></label>
+          <label>出貨期限<select name="shipBy"><option>24 小時內</option><option selected>48 小時內</option><option>3 天內</option></select></label>
+          <label>驗收期<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
+          <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>數位交付</option></select></label>
+          <button class="button primary" type="submit">產生預覽</button>
+        </form>
+        <aside class="preview" aria-live="polite">
+          <h3>交易連結預覽</h3>
+          <div id="previewBox"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="deploy" class="section split muted">
+      <div>
+        <p class="eyebrow">開源與上線</p>
+        <h2>先公開前端，核心合約與風控可保留私有。</h2>
+      </div>
+      <ul class="deploy-list">
+        <li><strong>GitHub Pages：</strong>放 landing page、demo、文件。</li>
+        <li><strong>GitHub Actions：</strong>自動部署靜態站。</li>
+        <li><strong>後端：</strong>正式交易 API 建議用 Cloudflare Workers/Supabase。</li>
+        <li><strong>開源：</strong>UI 與文件可開源；風控規則、仲裁後台、金流整合先私有。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>二手保 MVP｜此展示不處理真實資金，不提供法律、稅務或投資建議。</p>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
