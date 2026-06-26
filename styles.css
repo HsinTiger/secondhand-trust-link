@@ -94,3 +94,6 @@ input, select { width: 100%; border: 1px solid var(--line); background: white; c
 .chain-row span { color: rgba(255,255,255,.62); }
 .chain-row strong { text-align: right; }
 @media (max-width: 880px) { .problem-grid { grid-template-columns: 1fr; } .chain-row { display: grid; } .chain-row strong { text-align: left; } }
+.meetup-section { padding-top: 42px; }
+.meetup-rules > div:first-child { border-color: rgba(242, 184, 75, .55); }
+.meetup-rules > div:last-child { border-color: rgba(15, 123, 82, .32); }
