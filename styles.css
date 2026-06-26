@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg: #f7f3ea;
   --panel: #fffaf1;
   --ink: #17211b;
@@ -82,3 +82,15 @@ input, select { width: 100%; border: 1px solid var(--line); background: white; c
   .steps, .rules { grid-template-columns: 1fr; }
   .status-card { transform: none; }
 }
+.problem-grid { grid-template-columns: repeat(3, 1fr); }
+.problem-grid article { background: rgba(255,250,241,.86); border: 1px solid var(--line); border-radius: 24px; padding: 22px; }
+.problem-grid p { color: var(--muted); line-height: 1.7; }
+.mascot { position: relative; overflow: hidden; }
+.mascot::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #fff; right: 7px; top: 8px; opacity: .9; }
+.chain-section { padding-top: 40px; }
+.chain-card { background: #17211b; color: #fff; border-radius: 30px; padding: 26px; box-shadow: var(--shadow); }
+.chain-row { display: flex; justify-content: space-between; gap: 18px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.14); }
+.chain-row:last-child { border-bottom: 0; }
+.chain-row span { color: rgba(255,255,255,.62); }
+.chain-row strong { text-align: right; }
+@media (max-width: 880px) { .problem-grid { grid-template-columns: 1fr; } .chain-row { display: grid; } .chain-row strong { text-align: left; } }

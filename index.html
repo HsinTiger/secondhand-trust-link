@@ -1,21 +1,21 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>二手保｜私下交易的安全連結</title>
+  <title>MochiLock｜二手交易的安心鎖</title>
   <meta name="description" content="給 FB、LINE、社群二手買賣用的低費率安全交易連結：付款鎖定、出貨證明、驗收期限、爭議紀錄，全流程可查證。" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <header class="site-header">
     <nav class="nav">
-      <a class="brand" href="#top" aria-label="二手保首頁"><span class="brand-mark">保</span>二手保</a>
+      <a class="brand" href="#top" aria-label="MochiLock 首頁"><span class="brand-mark mascot">糬</span>MochiLock</a>
       <div class="nav-links">
+        <a href="#questions">痛點</a>
         <a href="#flow">流程</a>
-        <a href="#guardrails">保障</a>
+        <a href="#chain">可查證</a>
         <a href="#demo">建立連結</a>
-        <a href="#deploy">上線策略</a>
       </div>
     </nav>
   </header>
@@ -24,11 +24,11 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">給 FB 社團、LINE 群、代購與二手交易</p>
-        <h1>私下買賣，不再只靠人品。</h1>
-        <p class="lead">二手保是一個低手續費交易安全連結：買方付款先鎖定、賣方安心出貨、驗收期過後自動撥款，證據與流程都可查。</p>
+        <h1>私下買賣，加一把安心鎖。</h1>
+        <p class="lead">MochiLock 是一個低手續費交易安全連結：買方付款先鎖定、賣方安心出貨、驗收期過後自動撥款，證據與流程都可查。</p>
         <div class="hero-actions">
           <a class="button primary" href="#demo">試做一筆交易</a>
-          <a class="button secondary" href="#flow">看保障流程</a>
+          <a class="button secondary" href="#questions">看常見問題</a>
         </div>
         <div class="trust-row" aria-label="產品承諾">
           <span>非託管 MVP</span><span>不做換幣</span><span>不碰法幣出入金</span><span>先 0% 手續費</span>
@@ -48,6 +48,21 @@
           <li>自動撥款</li>
         </ol>
       </aside>
+    </section>
+
+    <section id="questions" class="section">
+      <div class="section-title">
+        <p class="eyebrow">對標賣貨便，但更輕</p>
+        <h2>私下交易常見問題，一開始就寫進流程。</h2>
+      </div>
+      <div class="grid problem-grid">
+        <article><h3>賣家收錢不出貨？</h3><p>款項先鎖定在交易條件裡，逾期未出貨可退款，不再直接匯給陌生人。</p></article>
+        <article><h3>買家不取貨怎麼辦？</h3><p>可設定保證金、出貨期限與不取貨補償，降低賣家白付物流成本。</p></article>
+        <article><h3>收到假貨或瑕疵品？</h3><p>驗收期內可提出爭議，上傳開箱照片、影片、序號與聊天紀錄。</p></article>
+        <article><h3>買家故意拖確認？</h3><p>驗收期倒數清楚顯示，逾期未爭議就自動進入撥款。</p></article>
+        <article><h3>雙方各說各話？</h3><p>交易條件、付款、出貨、驗收與爭議事件都有時間戳與證據 hash。</p></article>
+        <article><h3>蝦皮流程太重、費用太高？</h3><p>先從一個交易連結開始，適合 FB/LINE 社群小額二手交易。</p></article>
+      </div>
     </section>
 
     <section id="flow" class="section">
@@ -73,6 +88,33 @@
         <div><h3>防賣方詐騙</h3><ul><li>逾期未出貨可退款</li><li>出貨需留證</li><li>貨不符可爭議</li></ul></div>
         <div><h3>防買方惡意</h3><ul><li>先鎖款才出貨</li><li>驗收期到自動撥款</li><li>不取貨可扣補償</li></ul></div>
       </div>
+    </section>
+
+    <section id="chain" class="section split chain-section">
+      <div>
+        <p class="eyebrow">區塊鏈白話化</p>
+        <h2>不用懂錢包，也能看懂交易進度。</h2>
+        <p>我們不把「Web3」當賣點，而是把鏈上紀錄翻譯成一般人看得懂的狀態：已付款、已出貨、驗收中、爭議中、已撥款。</p>
+      </div>
+      <div class="chain-card">
+        <div class="chain-row"><span>付款紀錄</span><strong>可查交易 hash</strong></div>
+        <div class="chain-row"><span>證據紀錄</span><strong>照片/影片不上鏈，只上 hash</strong></div>
+        <div class="chain-row"><span>撥款規則</span><strong>合約公開，可審查</strong></div>
+        <div class="chain-row"><span>平台角色</span><strong>不保管用戶私鑰</strong></div>
+      </div>
+    </section>
+
+    <section id="ai-review" class="section split muted">
+      <div>
+        <p class="eyebrow">AI 輔助，不取代仲裁</p>
+        <h2>先用便宜模型做風險提示，不做最終判決。</h2>
+      </div>
+      <ul class="deploy-list">
+        <li><strong>商品審查：</strong>偵測禁售品、高風險關鍵字、疑似仿冒或票券點數。</li>
+        <li><strong>證據整理：</strong>幫雙方把付款、出貨、開箱證據整理成時間線。</li>
+        <li><strong>爭議摘要：</strong>AI 只產生摘要與缺件提醒，最後仍由規則或人工判斷。</li>
+        <li><strong>低成本路線：</strong>先用 Cloudflare Workers AI、Groq 或 Hugging Face 類 API，必要時才升級。</li>
+      </ul>
     </section>
 
     <section id="demo" class="section demo-section">
@@ -111,7 +153,7 @@
   </main>
 
   <footer class="footer">
-    <p>二手保 MVP｜此展示不處理真實資金，不提供法律、稅務或投資建議。</p>
+    <p>MochiLock MVP｜此展示不處理真實資金，不提供法律、稅務或投資建議。</p>
   </footer>
 
   <script src="./app.js"></script>
