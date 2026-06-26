@@ -130,7 +130,7 @@ export default {
     const headers = cors(request, env);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
 
-    if (url.pathname === '/api/health') return json({ ok: true, service: 'mochilock-api' }, 200, headers);
+    if (url.pathname === '/api/health') return json({ ok: true, service: 'secondhand-safe-trade-api' }, 200, headers);
     if (url.pathname === '/api/deals' && request.method === 'POST') return createDeal(request, env);
 
     const match = url.pathname.match(/^\/api\/deals\/([^/]+)(?:\/events)?$/);

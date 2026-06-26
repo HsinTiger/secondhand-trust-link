@@ -1,13 +1,13 @@
 ﻿{
-  "name": "mochilock",
+  "name": "secondhand-safe-trade",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "db:local": "wrangler d1 migrations apply mochilock-db --local",
-    "db:remote": "wrangler d1 migrations apply mochilock-db --remote"
+    "db:local": "wrangler d1 migrations apply secondhand-safe-trade-db --local",
+    "db:remote": "wrangler d1 migrations apply secondhand-safe-trade-db --remote"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

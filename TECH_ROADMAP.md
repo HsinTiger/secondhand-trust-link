@@ -1,4 +1,4 @@
-﻿# MochiLock 技術路線：Escrow、AI 審查、零成本 MVP
+﻿# 二手安心交易技術路線：Escrow、AI 審查、零成本 MVP
 
 此文件是產品/工程規劃，不是法律意見或資安審計。
 
@@ -108,11 +108,11 @@ Created -> Funded -> Shipped -> Inspection -> Released
 
 ## 5. 品牌方向
 
-MochiLock = 柔軟但有鎖。
+二手安心交易 = 直白、可信、低門檻。
 
 - Mochi：降低 Web3/金融感，像日常小工具。
 - Lock：表達交易鎖款、安全流程。
-- 小 IP：麻糬鎖、圓形守門員、柔軟但守規矩。
+- 小 IP：安心盾牌、交易勾勾、清楚可靠的流程感。
 
 ## 6. 下一個工程 MVP
 

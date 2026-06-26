@@ -1,4 +1,4 @@
-﻿# MochiLock Cloudflare Runbook
+﻿# 二手安心交易 Cloudflare Runbook
 
 ## 需要 owner 配合
 
@@ -13,7 +13,7 @@
 
 ```bash
 npx wrangler login
-npx wrangler d1 create mochilock-db
+npx wrangler d1 create secondhand-safe-trade-db
 ```
 
 把輸出的 `database_id` 填入 `wrangler.toml`：
