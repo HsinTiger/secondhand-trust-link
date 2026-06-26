@@ -15,6 +15,25 @@ function formatAmount(value) {
   return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function logisticsNotes(payload) {
+  const length = Number(payload.package_length || 0);
+  const width = Number(payload.package_width || 0);
+  const height = Number(payload.package_height || 0);
+  const weight = Number(payload.package_weight || 0);
+  const notes = [];
+  if (payload.method === '面交') notes.push('面交交易仍建議約公開場所，並先寫清楚驗貨方式。');
+  if (payload.shipping_provider && payload.shipping_provider.includes('店到店')) notes.push('店到店規格、禁運品與實際運費以物流商公告為準。');
+  if (length || width || height || weight) notes.push('已記錄包裹尺寸重量，可作為出貨前溝通依據。');
+  if (!notes.length) notes.push('建議出貨前補上包裝照片、封箱照片與物流單號。');
+  return notes;
+}
+
+function packageText(payload) {
+  const dims = [payload.package_length, payload.package_width, payload.package_height].filter(Boolean).join(' × ');
+  const weight = payload.package_weight ? payload.package_weight + ' kg' : '未填重量';
+  return dims ? dims + ' cm / ' + weight : '尚未填寫尺寸重量';
+}
+
 function formPayload() {
   const data = new FormData(form);
   return {
@@ -39,6 +58,10 @@ function renderPreview() {
       <div class="preview-row"><strong>出貨期限</strong><span>${escapeHtml(payload.ship_by)}</span></div>
       <div class="preview-row"><strong>驗收期</strong><span>${escapeHtml(payload.inspect)}</span></div>
       <div class="preview-row"><strong>交易方式</strong><span>${escapeHtml(payload.method)}</span></div>
+      <div class="preview-row"><strong>物流方式</strong><span>${escapeHtml(payload.shipping_provider || '未選擇')}</span></div>
+      <div class="preview-row"><strong>預估運費</strong><span>NT$ ${escapeHtml(payload.shipping_fee || '0')} · ${escapeHtml(payload.shipping_fee_payer || '未設定')}</span></div>
+      <div class="preview-row"><strong>包裹規格</strong><span>${escapeHtml(packageText(payload))}</span></div>
+      <div class="risk-box"><strong>物流提醒</strong><ul>${logisticsNotes(payload).map((note) => `<li>${escapeHtml(note)}</li>`).join('')}</ul></div>
       <div class="status-strip" aria-label="交易進度">
         <span>建立</span><span>約定</span><span>出貨</span><span>驗收</span><span>完成</span>
       </div>

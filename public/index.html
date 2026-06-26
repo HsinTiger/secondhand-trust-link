@@ -125,6 +125,20 @@
       </div>
     </section>
 
+    <section id="logistics" class="section logistics-section">
+      <div class="section-title center-title reveal">
+        <p class="eyebrow">下一個實用關鍵</p>
+        <h2>店到店物流，先做試算與留證，再談正式串接。</h2>
+        <p>7-11、全家、萊爾富是二手交易最常見出貨方式。我們先幫雙方看懂運費、尺寸重量限制、物流單號與取件進度，等有使用量後再串正式 API。</p>
+      </div>
+      <div class="grid logistics-grid reveal-group">
+        <article><span>01</span><h3>運費與限制提醒</h3><p>建立交易時選 7-11 / 全家 / 萊爾富，填長寬高與重量，先提醒是否可能超過店到店限制。</p></article>
+        <article><span>02</span><h3>物流單號與進度</h3><p>賣家可先手動填單號，交易頁顯示待寄件、已寄件、到店、已取件、退回等狀態。</p></article>
+        <article><span>03</span><h3>證據包更完整</h3><p>包裝照、封箱照、寄件單、取件期限都進入交易時間線，降低不取貨與商品損壞爭議。</p></article>
+      </div>
+      <p class="preview-note center-note">MVP 階段不代寄、不保證物流時效；實際尺寸、重量、運費與禁運品仍以物流商公告為準。</p>
+    </section>
+
     <section id="demo" class="section demo-section">
       <div class="section-title">
         <p class="eyebrow">MVP Demo</p>
@@ -138,6 +152,17 @@
           <label>出貨期限<select name="shipBy"><option>24 小時內</option><option selected>48 小時內</option><option>3 天內</option></select></label>
           <label>驗收期<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
           <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>數位交付</option></select></label>
+          <div class="form-subtitle">物流設定 MVP</div>
+          <label>店到店物流<select name="shippingProvider"><option selected>7-11 店到店</option><option>全家店到店</option><option>萊爾富店到店</option><option>面交/自取</option><option>其他物流</option></select></label>
+          <label>運費誰付<select name="shippingFeePayer"><option selected>買方負擔</option><option>賣方負擔</option><option>雙方分攤</option></select></label>
+          <label>預估運費 NT$<input name="shippingFee" type="number" min="0" step="1" value="60" /></label>
+          <div class="package-grid">
+            <label>長 cm<input name="packageLength" type="number" min="0" step="0.1" placeholder="例如 30" /></label>
+            <label>寬 cm<input name="packageWidth" type="number" min="0" step="0.1" placeholder="例如 20" /></label>
+            <label>高 cm<input name="packageHeight" type="number" min="0" step="0.1" placeholder="例如 10" /></label>
+            <label>重量 kg<input name="packageWeight" type="number" min="0" step="0.1" placeholder="例如 1.2" /></label>
+          </div>
+          <p class="field-note">目前只做運費與規格提醒，不代寄、不取號；正式限制仍以物流商公告為準。</p>
           <button class="button primary" type="submit">產生預覽</button>
         </form>
         <aside class="preview sticky-preview" aria-live="polite">

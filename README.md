@@ -75,3 +75,8 @@ Cloudflare Workers 可由 `.github/workflows/cloudflare.yml` 手動觸發。
 ## Strategy memo
 
 - `BOSS_PLATFORM_STRATEGY_MEMO.md`：回覆老闆關於傳統電商抽成、賣貨便仲裁弱、USDT/USDC 門檻與我們切入策略的備忘錄。
+
+
+## Logistics roadmap
+
+- `LOGISTICS_INTEGRATION_PLAN.md`：7-11、全家、萊爾富店到店物流試算、限制提醒、貨態與正式 API 串接路線。
