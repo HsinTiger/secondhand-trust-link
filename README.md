@@ -80,3 +80,10 @@ Cloudflare Workers 可由 `.github/workflows/cloudflare.yml` 手動觸發。
 ## Logistics roadmap
 
 - `LOGISTICS_INTEGRATION_PLAN.md`：7-11、全家、萊爾富店到店物流試算、限制提醒、貨態與正式 API 串接路線。
+
+
+## Agent handoff: logistics and growth
+
+- `LOGISTICS_API_DECISION_MEMO.md`：物流自建 vs 統合 API 決策、供應商訪談問題、PoC 門檻。
+- `COMMUNITY_OUTREACH_TEMPLATES.md`：FB/LINE 群主私訊模板、社團貼文、圖卡與 Reels 草案。
+- `META_CONTENT_OPERATING_PLAN.md`：FB / IG / Threads 帳號建立、內容支柱、發文頻率、穩定幣科普邊界。
