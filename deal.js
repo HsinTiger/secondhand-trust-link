@@ -6,12 +6,12 @@ const root = document.querySelector('#dealStatus');
 
 const statusLabels = {
   created: '交易建立',
-  funded: '付款鎖定',
+  funded: '條件確認',
   shipped: '賣方已出貨',
   inspection: '買方驗收中',
   disputed: '爭議處理中',
-  released: '已撥款',
-  refunded: '已退款',
+  released: '交易完成',
+  refunded: '交易取消',
 };
 
 function escapeHtml(value) {
@@ -41,7 +41,8 @@ function render(data) {
       <span class="pill success">${escapeHtml(statusLabels[deal.status] || deal.status)}</span>
       <strong>${escapeHtml(deal.item)}</strong>
     </div>
-    <div class="amount">USDC ${escapeHtml(deal.amount_usdc)}</div>
+    <div class="amount">約定金額 ${escapeHtml(deal.amount_usdc)}</div>
+    <p class="risk-box"><strong>MVP 提醒：</strong>本服務目前不收款、不保管資金、不保證交易結果；此頁只做條件與證據流程紀錄。</p>
     <div class="preview-card">
       <div class="preview-row"><strong>交易方式</strong><span>${escapeHtml(deal.method)}</span></div>
       <div class="preview-row"><strong>出貨期限</strong><span>${escapeHtml(deal.ship_by)}</span></div>
@@ -51,7 +52,7 @@ function render(data) {
     <ol class="timeline deal-timeline">
       ${steps.map((step) => `<li class="${step === deal.status ? 'active' : steps.indexOf(step) < steps.indexOf(deal.status) || deal.status === 'released' ? 'done' : ''}">${statusLabels[step]}</li>`).join('')}
       ${deal.status === 'disputed' ? '<li class="active">爭議處理中</li>' : ''}
-      ${deal.status === 'refunded' ? '<li class="active">已退款</li>' : ''}
+      ${deal.status === 'refunded' ? '<li class="active">交易取消</li>' : ''}
     </ol>
     <div class="deal-actions">
       ${role === 'seller' ? eventButton('shipped', '賣方標記已出貨', 'seller') : ''}

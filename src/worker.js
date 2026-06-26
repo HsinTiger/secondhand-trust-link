@@ -6,11 +6,14 @@ const CODE_PATTERN = /^(pub|seller|buyer)_[a-f0-9]{24}$/;
 const MAX_JSON_BYTES = 4096;
 const RATE_LIMITS = {
   createDeal: { limit: 8, windowSeconds: 15 * 60 },
+  createDealGlobal: { limit: 12, windowSeconds: 15 * 60 },
   readDeal: { limit: 120, windowSeconds: 5 * 60 },
+  readGlobal: { limit: 240, windowSeconds: 5 * 60 },
   addEvent: { limit: 30, windowSeconds: 15 * 60 },
   feedback: { limit: 20, windowSeconds: 24 * 60 * 60 },
 };
 const HIGH_RISK_TERMS = ['票券', '禮品卡', '點數', '遊戲幣', '帳號', '精品', '代儲', '金融', '投資', '虛擬帳戶', '門號'];
+const MAX_EVENTS_PER_DEAL = 40;
 
 function securityHeaders() {
   return {
@@ -67,7 +70,8 @@ function id(prefix) {
 
 async function verifyTurnstile(request, env, body) {
   const secret = String(env.TURNSTILE_SECRET_KEY || '').trim();
-  if (!secret) return null;
+  const enforced = String(env.TURNSTILE_ENFORCED || '').trim() === 'true';
+  if (!secret) return enforced ? json({ error: 'turnstile_not_configured' }, 503, cors(request, env)) : null;
   const token = cleanText(body?.turnstile_token, 2048);
   if (!token) return json({ error: 'turnstile_required' }, 403, cors(request, env));
   const formData = new FormData();
@@ -117,8 +121,7 @@ function validateAmount(value) {
 
 function clientFingerprint(request) {
   const cfIp = request.headers.get('cf-connecting-ip') || '';
-  const forwarded = request.headers.get('x-forwarded-for') || '';
-  const ip = cfIp || forwarded.split(',')[0].trim() || 'unknown-ip';
+  const ip = cfIp || 'unknown-ip';
   const userAgent = cleanText(request.headers.get('user-agent') || 'unknown-ua', 120);
   return `${ip}|${userAgent}`;
 }
@@ -172,6 +175,11 @@ function riskReview({ item, amount, method }) {
   return { level: hits.length || Number(amount) >= 300 ? 'medium' : 'low', warnings };
 }
 
+function prohibitedTerms(item) {
+  const lowerItem = item.toLowerCase();
+  return HIGH_RISK_TERMS.filter((term) => lowerItem.includes(term.toLowerCase()));
+}
+
 function nextStatus(eventType, current) {
   if (eventType === 'funded' && current === 'created') return 'funded';
   if (eventType === 'shipped' && ['funded', 'created'].includes(current)) return 'shipped';
@@ -186,6 +194,8 @@ function nextStatus(eventType, current) {
 async function createDeal(request, env) {
   const limited = await rateLimit(request, env, 'createDeal');
   if (limited) return limited;
+  const globalLimited = await rateLimit(request, env, 'createDealGlobal');
+  if (globalLimited) return globalLimited;
 
   const body = await readJson(request);
   if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
@@ -201,6 +211,10 @@ async function createDeal(request, env) {
 
   if (item.length < 2 || !amount) {
     return json({ error: 'invalid_deal', message: 'item and amount_usdc 1-1000 are required' }, 400, cors(request, env));
+  }
+  const prohibited = prohibitedTerms(item);
+  if (prohibited.length) {
+    return json({ error: 'prohibited_item', terms: prohibited, message: '此類品項容易被用於詐騙或違規交易，MVP 暫不開放建立交易。' }, 400, cors(request, env));
   }
 
   const now = new Date().toISOString();
@@ -233,11 +247,49 @@ async function getDeal(request, env, code, applyLimit = true) {
   if (!publicCode || !publicCode.startsWith('pub_')) return json({ error: 'invalid_code' }, 400, cors(request, env));
   const limited = await rateLimit(request, env, 'readDeal', publicCode);
   if (limited) return limited;
+  if (applyLimit) {
+    const globalLimited = await rateLimit(request, env, 'readGlobal');
+    if (globalLimited) return globalLimited;
+  }
 
   const deal = await env.DB.prepare('SELECT id, public_code, item, amount_usdc, method, ship_by, inspect, status, created_at, updated_at FROM deals WHERE public_code = ?').bind(publicCode).first();
   if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
   const events = await env.DB.prepare('SELECT type, actor, note, created_at FROM deal_events WHERE deal_id = ? ORDER BY created_at ASC').bind(deal.id).all();
   return json({ deal, events: events.results || [] }, 200, cors(request, env));
+}
+
+async function getMetrics(request, env) {
+  const limited = await rateLimit(request, env, 'readGlobal', 'metrics');
+  if (limited) return limited;
+
+  const [dealTotal, dealsByStatus, feedbackTotal, feedbackByRole, feedbackByWillingness, feedbackByUseCase] = await Promise.all([
+    env.DB.prepare('SELECT COUNT(*) AS count FROM deals').first(),
+    env.DB.prepare('SELECT status, COUNT(*) AS count FROM deals GROUP BY status ORDER BY count DESC, status ASC').all(),
+    env.DB.prepare('SELECT COUNT(*) AS count FROM feedback').first(),
+    env.DB.prepare('SELECT role, COUNT(*) AS count FROM feedback GROUP BY role ORDER BY count DESC, role ASC').all(),
+    env.DB.prepare('SELECT willingness, COUNT(*) AS count FROM feedback GROUP BY willingness ORDER BY count DESC, willingness ASC').all(),
+    env.DB.prepare('SELECT use_case, COUNT(*) AS count FROM feedback WHERE use_case IS NOT NULL AND use_case != "" GROUP BY use_case ORDER BY count DESC, use_case ASC LIMIT 12').all(),
+  ]);
+
+  return json({
+    generated_at: new Date().toISOString(),
+    privacy: 'aggregate_only_no_contact_no_tokens',
+    deals: {
+      total: Number(dealTotal?.count || 0),
+      by_status: dealsByStatus.results || [],
+    },
+    feedback: {
+      total: Number(feedbackTotal?.count || 0),
+      by_role: feedbackByRole.results || [],
+      by_willingness: feedbackByWillingness.results || [],
+      by_use_case: feedbackByUseCase.results || [],
+    },
+    targets: {
+      seven_day_feedback: 10,
+      seven_day_deals: 30,
+      signal: '先看真實賣家是否願意分享交易連結，不急著做金流。',
+    },
+  }, 200, { ...cors(request, env), 'cache-control': 'no-store' });
 }
 
 async function createFeedback(request, env) {
@@ -293,7 +345,15 @@ async function addEvent(request, env, code) {
 
   if ((eventType === 'shipped' || eventType === 'released') && !sellerAllowed) return json({ error: 'seller_token_required' }, 403, cors(request, env));
   if ((eventType === 'buyer_confirmed' || eventType === 'dispute_opened') && !buyerAllowed) return json({ error: 'buyer_token_required' }, 403, cors(request, env));
+  if (eventType === 'released') return json({ error: 'buyer_confirmation_required' }, 403, cors(request, env));
+  if (eventType === 'buyer_confirmed' && !['shipped', 'inspection'].includes(deal.status)) return json({ error: 'not_ready_for_confirmation' }, 409, cors(request, env));
   if (['released', 'refunded'].includes(deal.status)) return json({ error: 'deal_closed' }, 409, cors(request, env));
+  const eventCount = await env.DB.prepare('SELECT COUNT(*) AS count FROM deal_events WHERE deal_id = ?').bind(deal.id).first();
+  if (Number(eventCount?.count || 0) >= MAX_EVENTS_PER_DEAL) return json({ error: 'too_many_events' }, 429, cors(request, env));
+  if (eventType !== 'note') {
+    const duplicate = await env.DB.prepare('SELECT id FROM deal_events WHERE deal_id = ? AND type = ? LIMIT 1').bind(deal.id, eventType).first();
+    if (duplicate) return json({ error: 'duplicate_event' }, 409, cors(request, env));
+  }
   const note = cleanText(body.note, 500);
   if (eventType === 'note' && note.length < 2) return json({ error: 'invalid_note' }, 400, cors(request, env));
 
@@ -316,6 +376,7 @@ export default {
     if (url.pathname === '/api/health') return json({ ok: true, service: 'secondhand-safe-trade-api' }, 200, headers);
     if (url.pathname === '/api/deals' && request.method === 'POST') return createDeal(request, env);
     if (url.pathname === '/api/feedback' && request.method === 'POST') return createFeedback(request, env);
+    if (url.pathname === '/api/metrics' && request.method === 'GET') return getMetrics(request, env);
 
     const match = url.pathname.match(/^\/api\/deals\/([^/]+)(?:\/events)?$/);
     if (match && request.method === 'GET') return getDeal(request, env, match[1]);

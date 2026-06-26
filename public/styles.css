@@ -123,3 +123,15 @@ input, select { width: 100%; border: 1px solid var(--line); background: white; c
 .article-card { margin: 30px 0; }
 .article-card li { margin: 10px 0; color: var(--muted); line-height: 1.7; }
 .article-cta { align-items: center; }
+
+.metric-grid { grid-template-columns: repeat(3, 1fr); margin-bottom: 22px; }
+.metric-card, .feedback-item { background: rgba(255, 250, 241, .86); border: 1px solid var(--line); border-radius: 24px; padding: 22px; }
+.metric-card span, .feedback-item span, .feedback-item small { color: var(--muted); }
+.metric-card strong { display: block; font-size: 44px; letter-spacing: -0.05em; margin: 8px 0; }
+.dashboard-split { padding-top: 34px; }
+.mini-list, .feedback-list { display: grid; gap: 12px; }
+.mini-row { display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.feedback-item { display: grid; gap: 8px; }
+.feedback-item div { display: flex; justify-content: space-between; gap: 16px; }
+.feedback-item p { color: var(--ink); line-height: 1.65; margin-bottom: 0; }
+@media (max-width: 880px) { .metric-grid { grid-template-columns: 1fr; } .feedback-item div { display: grid; } }

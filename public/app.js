@@ -1,6 +1,14 @@
 ﻿const form = document.querySelector('#dealForm');
 const previewBox = document.querySelector('#previewBox');
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/'/g, '&#39;');
+}
+
 function formatAmount(value) {
   const amount = Number(value || 0);
   return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -20,18 +28,18 @@ function formPayload() {
 
 function renderPreview() {
   const payload = formPayload();
-  const fee = Math.max(Number(payload.amount_usdc || 0) * 0.005, 0.2);
+  const fee = 0;
 
   previewBox.innerHTML = `
     <div class="preview-card">
-      <div class="preview-row"><strong>商品</strong><span>${payload.item}</span></div>
-      <div class="preview-row"><strong>鎖定金額</strong><span>${formatAmount(payload.amount_usdc)} USDC</span></div>
-      <div class="preview-row"><strong>預估手續費</strong><span>${formatAmount(fee)} USDC（示範 0.5%）</span></div>
-      <div class="preview-row"><strong>出貨期限</strong><span>${payload.ship_by}</span></div>
-      <div class="preview-row"><strong>驗收期</strong><span>${payload.inspect}</span></div>
-      <div class="preview-row"><strong>交易方式</strong><span>${payload.method}</span></div>
+      <div class="preview-row"><strong>商品</strong><span>${escapeHtml(payload.item)}</span></div>
+      <div class="preview-row"><strong>約定金額</strong><span>${formatAmount(payload.amount_usdc)}</span></div>
+      <div class="preview-row"><strong>MVP 費用</strong><span>${formatAmount(fee)}（目前不收取）</span></div>
+      <div class="preview-row"><strong>出貨期限</strong><span>${escapeHtml(payload.ship_by)}</span></div>
+      <div class="preview-row"><strong>驗收期</strong><span>${escapeHtml(payload.inspect)}</span></div>
+      <div class="preview-row"><strong>交易方式</strong><span>${escapeHtml(payload.method)}</span></div>
       <div class="status-strip" aria-label="交易進度">
-        <span>建立</span><span>鎖款</span><span>出貨</span><span>驗收</span><span>撥款</span>
+        <span>建立</span><span>約定</span><span>出貨</span><span>驗收</span><span>完成</span>
       </div>
     </div>
   `;
@@ -58,16 +66,16 @@ function renderCreated(data) {
   const warnings = data.risk?.warnings || [];
   previewBox.innerHTML = `
     <div class="preview-card created-card">
-      <div class="preview-row"><strong>交易已建立</strong><span>${data.deal.public_code}</span></div>
-      <div class="preview-row"><strong>公開狀態頁</strong><span><a href="${publicUrl}">打開</a></span></div>
-      <div class="preview-row"><strong>賣方管理連結</strong><span><button class="copy-link" data-copy="${sellerUrl}">複製</button></span></div>
-      <div class="preview-row"><strong>買方操作連結</strong><span><button class="copy-link" data-copy="${buyerUrl}">複製</button></span></div>
-      <div class="risk-box"><strong>風險提示</strong><ul>${warnings.map((warning) => `<li>${warning}</li>`).join('')}</ul></div>
+      <div class="preview-row"><strong>交易已建立</strong><span>${escapeHtml(data.deal.public_code)}</span></div>
+      <div class="preview-row"><strong>公開狀態頁</strong><span><a href="${escapeAttr(publicUrl)}">打開</a></span></div>
+      <div class="preview-row"><strong>賣方管理連結</strong><span><button class="copy-link" data-copy="${escapeAttr(sellerUrl)}">複製</button></span></div>
+      <div class="preview-row"><strong>買方操作連結</strong><span><button class="copy-link" data-copy="${escapeAttr(buyerUrl)}">複製</button></span></div>
+      <div class="risk-box"><strong>風險提示</strong><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join('')}</ul></div>
       <div class="share-actions">
         <a class="button secondary" href="https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(publicUrl)}" target="_blank" rel="noopener">分享狀態頁到 LINE</a>
         <a class="button secondary" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(publicUrl)}" target="_blank" rel="noopener">分享到 Facebook</a>
       </div>
-      <p class="preview-note">MVP 提醒：目前只是流程紀錄，不處理真實資金。請勿公開賣方/買方操作連結。</p>
+      <p class="preview-note">MVP 提醒：本服務目前不收款、不保管資金、不保證交易結果。請勿公開賣方/買方操作連結。</p>
     </div>
   `;
 }
@@ -94,7 +102,7 @@ renderPreview();
 
 const feedbackForm = document.querySelector('#feedbackForm');
 const feedbackStatus = document.querySelector('#feedbackStatus');
-const shareText = '私下二手交易不用只靠人品，這個工具把付款、出貨、驗收、爭議流程寫清楚：';
+const shareText = '私下二手交易不用只靠人品，這個工具把條件、出貨、驗收、爭議流程寫清楚：';
 const shareUrl = location.origin + location.pathname;
 const lineShare = document.querySelector('#lineShare');
 const fbShare = document.querySelector('#fbShare');
