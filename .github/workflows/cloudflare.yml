@@ -2,19 +2,6 @@
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
-    paths:
-      - "src/**"
-      - "migrations/**"
-      - "wrangler.toml"
-      - "package.json"
-      - "package-lock.json"
-      - "index.html"
-      - "deal.html"
-      - "app.js"
-      - "deal.js"
-      - "styles.css"
 
 jobs:
   deploy:
@@ -29,7 +16,7 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Deploy Worker
         run: npx wrangler deploy

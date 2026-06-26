@@ -1,4 +1,4 @@
-# OS/editor noise
+﻿# OS/editor noise
 .DS_Store
 Thumbs.db
 *.swp
@@ -21,3 +21,4 @@ node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
