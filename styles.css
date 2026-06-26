@@ -104,3 +104,8 @@ input, select { width: 100%; border: 1px solid var(--line); background: white; c
 .events-list { display: grid; gap: 10px; }
 .event-row { display: grid; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
 .event-row span, .event-row small { color: var(--muted); }
+
+.mascot-card { display: grid; gap: 18px; }
+.mascot-stage { display: grid; place-items: center; background: linear-gradient(180deg, #fffdf7, #f4ead8); border: 1px solid var(--line); border-radius: 26px; padding: 18px; }
+.mascot-stage img { width: min(240px, 72vw); height: auto; display: block; filter: drop-shadow(0 18px 30px rgba(23, 33, 27, .14)); }
+.mascot-copy { color: var(--muted); line-height: 1.65; margin: -4px 0 0; }
