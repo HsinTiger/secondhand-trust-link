@@ -461,6 +461,62 @@ async function addVerification(request, env, code) {
   return json({ ok: true, verification: { check_type: checkType, score, verdict, result } }, 200, cors(request, env));
 }
 
+async function addBuyerInfo(request, env, code) {
+  const publicCode = cleanCode(code);
+  if (!publicCode || !publicCode.startsWith('pub_')) return json({ error: 'invalid_code' }, 400, cors(request, env));
+
+  const body = await readJson(request);
+  if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
+
+  const token = cleanCode(body.token);
+  const deal = await env.DB.prepare('SELECT id, buyer_code, method FROM deals WHERE public_code = ?').bind(publicCode).first();
+  if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
+  if (!token || token !== deal.buyer_code) return json({ error: 'buyer_token_required' }, 403, cors(request, env));
+  if (deal.method !== '寄送') return json({ error: 'pickup_only_for_shipping' }, 400, cors(request, env));
+
+  const pickupName = cleanText(body.pickup_name, 40);
+  const pickupPhone = cleanText(body.pickup_phone, 20);
+  const pickupStore = cleanText(body.pickup_store, 80);
+  const pickupStoreCode = cleanText(body.pickup_store_code, 20);
+  const note = cleanText(body.note, 200);
+
+  if (!pickupName.length || !pickupPhone.length || !pickupStore.length) {
+    return json({ error: 'incomplete_info', message: 'pickup_name, pickup_phone, pickup_store are required' }, 400, cors(request, env));
+  }
+
+  const now = new Date().toISOString();
+  const existing = await env.DB.prepare('SELECT id FROM buyer_pickup WHERE deal_id = ?').bind(deal.id).first();
+  if (existing) {
+    await env.DB.prepare('UPDATE buyer_pickup SET pickup_name=?, pickup_phone=?, pickup_store=?, pickup_store_code=?, note=?, updated_at=? WHERE deal_id=?')
+      .bind(pickupName, pickupPhone, pickupStore, pickupStoreCode, note, now, deal.id).run();
+  } else {
+    await env.DB.prepare('INSERT INTO buyer_pickup (id, deal_id, pickup_name, pickup_phone, pickup_store, pickup_store_code, note, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)')
+      .bind(id('bp'), deal.id, pickupName, pickupPhone, pickupStore, pickupStoreCode, note, now, now).run();
+  }
+
+  return json({ ok: true, message: '取貨資訊已更新，賣家可在交易頁查看' }, 200, cors(request, env));
+}
+
+async function getBuyerInfo(request, env, code) {
+  const url = new URL(request.url);
+  const publicCode = cleanCode(code);
+  if (!publicCode || !publicCode.startsWith('pub_')) return json({ error: 'invalid_code' }, 400, cors(request, env));
+
+  const token = cleanCode(url.searchParams.get('token'));
+  const deal = await env.DB.prepare('SELECT id, seller_code, buyer_code FROM deals WHERE public_code = ?').bind(publicCode).first();
+  if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
+
+  const isSeller = token && token === deal.seller_code;
+  const isBuyer = token && token === deal.buyer_code;
+  if (!isSeller && !isBuyer) return json({ error: 'unauthorized_token' }, 403, cors(request, env));
+
+  const info = await env.DB.prepare('SELECT pickup_name, pickup_phone, pickup_store, pickup_store_code, note, created_at, updated_at FROM buyer_pickup WHERE deal_id = ?').bind(deal.id).first();
+  if (!info) return json({ pickup: null }, 200, cors(request, env));
+
+  if (isBuyer) return json({ pickup: { status: '已填寫', created_at: info.created_at } }, 200, cors(request, env));
+  return json({ pickup: info }, 200, cors(request, env));
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -478,6 +534,10 @@ export default {
 
     const verifyMatch = url.pathname.match(/^\/api\/deals\/([^/]+)\/verify$/);
     if (verifyMatch && request.method === 'POST') return addVerification(request, env, verifyMatch[1]);
+
+    const pickupMatch = url.pathname.match(/^\/api\/deals\/([^/]+)\/pickup$/);
+    if (pickupMatch && request.method === 'POST') return addBuyerInfo(request, env, pickupMatch[1]);
+    if (pickupMatch && request.method === 'GET') return getBuyerInfo(request, env, pickupMatch[1]);
 
     const match = url.pathname.match(/^\/api\/deals\/([^/]+)(?:\/events)?$/);
     if (match && request.method === 'GET') return getDeal(request, env, match[1]);

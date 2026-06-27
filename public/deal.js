@@ -41,7 +41,7 @@ function renderShippingSection(shipping) {
   if (!shipping || !shipping.tracking_number) return '';
   return `
     <div class="preview-card shipping-card">
-      <h3>物流資訊</h3>
+      <h3>📦 物流資訊</h3>
       <div class="preview-row"><strong>物流商</strong><span>${escapeHtml(shipping.carrier)}</span></div>
       <div class="preview-row"><strong>物流單號</strong><span>${escapeHtml(shipping.tracking_number)}</span></div>
       ${shipping.shipped_at ? `<div class="preview-row"><strong>出貨時間</strong><span>${escapeHtml(shipping.shipped_at)}</span></div>` : ''}
@@ -81,7 +81,7 @@ function renderVerifyForm() {
   if (role !== 'seller' || !token) return '';
   return `
     <div class="preview-card verify-form-card">
-      <h3>出貨前 AI 驗證</h3>
+      <h3>📷 出貨前 AI 驗證</h3>
       <p class="preview-note">上傳商品照片，AI 將自動比對描述與商品狀況。</p>
       <form id="verifyForm" class="deal-form">
         <label>商品照片 URL<input name="photo_url" type="url" required placeholder="https://..." /></label>
@@ -91,8 +91,59 @@ function renderVerifyForm() {
     </div>`;
 }
 
+function renderPickupInfo(pickup) {
+  if (!pickup || !pickup.pickup_store) return '';
+  return `
+    <div class="preview-card pickup-card">
+      <h3>🏪 買方取貨資訊</h3>
+      <div class="preview-row"><strong>收件人</strong><span>${escapeHtml(pickup.pickup_name)}</span></div>
+      <div class="preview-row"><strong>電話</strong><span>${escapeHtml(pickup.pickup_phone)}</span></div>
+      <div class="preview-row"><strong>取貨門市</strong><span>${escapeHtml(pickup.pickup_store)}</span></div>
+      ${pickup.pickup_store_code ? `<div class="preview-row"><strong>門市代碼</strong><span>${escapeHtml(pickup.pickup_store_code)}</span></div>` : ''}
+      ${pickup.note ? `<div class="preview-row"><strong>備註</strong><span>${escapeHtml(pickup.note)}</span></div>` : ''}
+      <p class="preview-note">⚠️ 請於 ibon / FamiPort / Life-ET 輸入以上資訊完成寄件。寄出後請填入物流單號。</p>
+    </div>`;
+}
+
+function renderBuyerPickupForm(deal) {
+  if (role !== 'buyer' || !token || deal.method !== '寄送') return '';
+  return `
+    <div class="preview-card pickup-form-card">
+      <h3>🏪 填寫取貨資訊</h3>
+      <p class="preview-note">賣家需要這資訊才能去超商寄件。你的電話只會提供給賣家用來寄件，不會公開在交易頁上。</p>
+      <form id="pickupForm" class="deal-form">
+        <label>收件人姓名<input name="pickup_name" required placeholder="您的真實姓名（取貨時需對證件）" /></label>
+        <label>聯絡電話<input name="pickup_phone" type="tel" required placeholder="手機號碼（到貨簡訊通知）" /></label>
+        <label>取貨門市<select name="pickup_store">
+          <option value="">請選擇超商</option>
+          <optgroup label="7-11">
+            <option>7-11 松江門市</option><option>7-11 忠孝門市</option><option>7-11 台北車站門市</option>
+            <option>7-11 景安門市</option><option>7-11 中和門市</option><option>7-11 板橋門市</option>
+            <option>7-11 新埔門市</option><option>7-11 三重門市</option><option>7-11 蘆洲門市</option>
+            <option>7-11 桃園門市</option><option>7-11 中壢門市</option><option>7-11 新竹門市</option>
+            <option>7-11 台中門市</option><option>7-11 台南門市</option><option>7-11 高雄門市</option>
+          </optgroup>
+          <optgroup label="全家">
+            <option>全家 松江門市</option><option>全家 忠孝門市</option><option>全家 台北車站門市</option>
+            <option>全家 景安門市</option><option>全家 中和門市</option><option>全家 板橋門市</option>
+            <option>全家 三重門市</option><option>全家 桃園門市</option><option>全家 台中門市</option>
+            <option>全家 台南門市</option><option>全家 高雄門市</option>
+          </optgroup>
+          <optgroup label="萊爾富">
+            <option>萊爾富 松江門市</option><option>萊爾富 忠孝門市</option><option>萊爾富 台北車站門市</option>
+            <option>萊爾富 台中門市</option><option>萊爾富 台南門市</option><option>萊爾富 高雄門市</option>
+          </optgroup>
+        </select></label>
+        <label>門市代碼（選填）<input name="pickup_store_code" placeholder="ibon 上的門市代碼，方便賣家寄件" /></label>
+        <label>備註（選填）<input name="note" placeholder="例如：請週六前寄出" /></label>
+        <button class="button primary" type="submit">送出取貨資訊</button>
+        <p id="pickupStatus" class="preview-note" aria-live="polite"></p>
+      </form>
+    </div>`;
+}
+
 function render(data) {
-  const { deal, events, shipping, verifications } = data;
+  const { deal, events, shipping, verifications, pickup } = data;
   const steps = ['created', 'funded', 'shipped', 'inspection', 'released'];
   root.innerHTML = `
     <div class="card-head">
@@ -113,6 +164,7 @@ function render(data) {
       ${deal.status === 'disputed' ? '<li class="active">爭議處理中</li>' : ''}
       ${deal.status === 'refunded' ? '<li class="active">交易取消</li>' : ''}
     </ol>
+    ${role === 'seller' && deal.method === '寄送' ? (pickup && pickup.pickup_store ? renderPickupInfo(pickup) : '<div class="preview-card"><h3>🏪 買方取貨資訊</h3><p class="preview-note">等待買方填寫取貨資訊...</p></div>') : ''}
     ${renderShippingSection(shipping)}
     ${renderVerifySection(verifications)}
     <div class="deal-actions">
@@ -120,6 +172,7 @@ function render(data) {
       ${role === 'buyer' ? eventButton('buyer_confirmed', '買方確認收貨', 'buyer') : ''}
       ${role === 'buyer' ? eventButton('dispute_opened', '買方提出爭議', 'buyer') : ''}
     </div>
+    ${renderBuyerPickupForm(deal)}
     ${renderShippingForm()}
     ${renderVerifyForm()}
     <h3>事件紀錄</h3>
@@ -130,6 +183,7 @@ function render(data) {
 
   bindShippingForm();
   bindVerifyForm();
+  bindPickupForm();
 }
 
 function bindShippingForm() {
@@ -186,13 +240,57 @@ function bindVerifyForm() {
   });
 }
 
+function bindPickupForm() {
+  const form = document.querySelector('#pickupForm');
+  if (!form) return;
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    const status = document.querySelector('#pickupStatus');
+    btn.disabled = true;
+    btn.textContent = '送出中...';
+    try {
+      const data = new FormData(form);
+      await api(`/api/deals/${encodeURIComponent(code)}/pickup`, {
+        method: 'POST',
+        body: JSON.stringify({
+          token,
+          pickup_name: data.get('pickup_name'),
+          pickup_phone: data.get('pickup_phone'),
+          pickup_store: data.get('pickup_store'),
+          pickup_store_code: data.get('pickup_store_code'),
+          note: data.get('note'),
+        }),
+      });
+      status.textContent = '✅ 取貨資訊已送出！賣家可以看到並前往超商寄件。';
+      load();
+    } catch (error) {
+      status.textContent = `送出失敗：${error.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '送出取貨資訊';
+    }
+  });
+}
+
 async function load() {
   if (!code) {
     root.textContent = '缺少交易代碼。';
     return;
   }
   try {
-    render(await api(`/api/deals/${encodeURIComponent(code)}`));
+    const dealData = await api(`/api/deals/${encodeURIComponent(code)}`);
+    let pickup = null;
+    if (token) {
+      try {
+        const resp = await fetch(`/api/deals/${encodeURIComponent(code)}/pickup?token=${encodeURIComponent(token)}`);
+        if (resp.ok) {
+          const pickupData = await resp.json();
+          pickup = pickupData.pickup;
+        }
+      } catch {}
+    }
+    render({ ...dealData, pickup });
   } catch (error) {
     root.textContent = `載入失敗：${error.message}`;
   }
