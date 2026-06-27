@@ -2,6 +2,11 @@ document.documentElement.classList.add('js-enabled');
 ﻿const form = document.querySelector('#dealForm');
 const previewBox = document.querySelector('#previewBox');
 
+// ─── Turnstile ───────────────────────────────────────────
+let turnstileToken = '';
+window.onTurnstileSuccess = (token) => { turnstileToken = token; };
+function resetTurnstile() { turnstileToken = ''; try { window.turnstile?.reset(); } catch {} }
+
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
 }
@@ -42,7 +47,7 @@ function formPayload() {
     ship_by: data.get('shipBy'),
     inspect: data.get('inspect'),
     method: data.get('method'),
-    turnstile_token: window.turnstileToken || '',
+    turnstile_token: turnstileToken,
   };
 }
 
@@ -117,6 +122,7 @@ form.addEventListener('submit', async (event) => {
   } finally {
     button.disabled = false;
     button.textContent = '產生預覽';
+    resetTurnstile();
   }
 });
 
@@ -152,7 +158,7 @@ if (feedbackForm) {
           willingness: data.get('willingness'),
           contact: data.get('contact'),
           message: data.get('message'),
-          turnstile_token: window.turnstileToken || '',
+          turnstile_token: turnstileToken,
         }),
       });
       if (!response.ok) throw new Error('feedback_failed');
@@ -161,6 +167,7 @@ if (feedbackForm) {
     } catch {
       feedbackStatus.textContent = '目前回饋 API 無法使用；你也可以先截圖或私訊分享想法。';
     } finally {
+      resetTurnstile();
       button.disabled = false;
       button.textContent = '送出回饋';
     }

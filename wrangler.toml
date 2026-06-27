@@ -13,8 +13,8 @@ database_name = "secondhand-safe-trade-db"
 database_id = "2d0d88f5-7bf3-4748-8000-46541dc7758e"
 
 [vars]
-TURNSTILE_SITE_KEY = ""
-TURNSTILE_ENFORCED = "false"
+TURNSTILE_SITE_KEY = "0x4AAAAAADryFUGyHZ-B9lGh"
+TURNSTILE_ENFORCED = "true"
 APP_ENV = "production"
 ALLOWED_ORIGIN = "https://hsintiger.github.io,https://secondhand-safe-trade-api.smartmmmoney.workers.dev"
 

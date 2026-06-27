@@ -6,6 +6,7 @@
   <title>二手安心交易｜私下買賣的安全交易連結</title>
   <meta name="description" content="給 FB、LINE、社群二手買賣用的交易條件連結：商品狀況、出貨證明、驗收期限、爭議紀錄，全流程有紀錄。" />
   <link rel="stylesheet" href="./styles.css" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -177,6 +178,7 @@
             <label>重量 kg<input name="packageWeight" type="number" min="0" step="0.1" placeholder="例如 1.2" /></label>
           </div>
           <p class="field-note">目前只做運費與規格提醒，不代寄、不取號；正式限制仍以物流商公告為準。</p>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADryFUGyHZ-B9lGh" data-callback="onTurnstileSuccess" data-theme="light"></div>
           <button class="button primary" type="submit">產生預覽</button>
         </form>
         <aside class="preview sticky-preview" aria-live="polite">
@@ -272,6 +274,7 @@
         </label>
         <label>聯絡方式，可留 LINE / Email<input name="contact" placeholder="選填，方便邀請你試用" /></label>
         <label>你的建議<textarea name="message" rows="4" required placeholder="你會用在哪種交易？最擔心哪一步？"></textarea></label>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADryFUGyHZ-B9lGh" data-callback="onTurnstileSuccess" data-theme="light"></div>
         <button class="button primary" type="submit">送出回饋</button>
         <p id="feedbackStatus" class="preview-note" aria-live="polite"></p>
       </form>
