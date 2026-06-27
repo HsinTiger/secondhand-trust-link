@@ -164,7 +164,13 @@
         <form id="dealForm" class="deal-form">
           <label>商品名稱<input name="item" value="二手 iPhone 15 128G" required /></label>
           <label>商品描述<textarea name="description" rows="3" placeholder="例如：iPhone 15 128G，太空黑，螢幕無刮傷，背板輕微磨損，含原廠充電線與盒子"></textarea></label>
-          <label>約定金額 (USDC)<input name="amount" type="number" min="1" step="0.01" value="260" required /></label>
+          <label>約定金額 (USDC / USDT)
+            <div class="amount-input-row">
+              <input name="amount" type="number" min="1" step="0.01" value="260" required />
+              <select name="currency"><option value="USDC" selected>USDC</option><option value="USDT">USDT</option></select>
+            </div>
+            <span class="price-hint" id="priceHint">≈ 載入匯率中...</span>
+          </label>
           <label>出貨期限<select name="shipBy"><option>24 小時內</option><option selected>48 小時內</option><option>3 天內</option></select></label>
           <label>驗收期<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
           <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>數位交付</option></select></label>

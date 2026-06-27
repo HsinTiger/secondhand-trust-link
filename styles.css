@@ -256,6 +256,11 @@ body::after { left: -150px; bottom: 90px; background: radial-gradient(circle, #f
 .shipping-card, .verify-card, .shipping-form-card, .verify-form-card { margin-top: 16px; }
 .shipping-card h3, .verify-card h3, .shipping-form-card h3, .verify-form-card h3 { margin-bottom: 12px; }
 
+/* Amount + currency selector */
+.amount-input-row { display: grid; grid-template-columns: 1fr 90px; gap: 8px; }
+.amount-input-row input, .amount-input-row select { width: 100%; }
+.price-hint { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+
 .identity-safety { background: linear-gradient(135deg, rgba(23,33,27,.96), rgba(15,95,62,.9)); color: #fff; border-radius: 36px; }
 .identity-safety .eyebrow { color: #9ee0bf; }
 .identity-safety p { color: rgba(255,255,255,.72); line-height: 1.75; }

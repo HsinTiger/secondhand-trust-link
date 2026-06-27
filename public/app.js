@@ -39,13 +39,37 @@ function packageText(payload) {
   return dims ? dims + ' cm / ' + weight : '尚未填寫尺寸重量';
 }
 
+// ─── Stablecoin price feed ───────────────────────────────────────────
+const USDC_USDT_CACHE = { price: 1.0, ts: 0 };
+
+async function fetchStablecoinPrice() {
+  if (Date.now() - USDC_USDT_CACHE.ts < 5 * 60 * 1000 && USDC_USDT_CACHE.price > 0) return USDC_USDT_CACHE.price;
+  try {
+    const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether,usd-coin&vs_currencies=usd');
+    const data = await resp.json();
+    const price = data['usd-coin']?.usd || 1.0;
+    USDC_USDT_CACHE.price = price;
+    USDC_USDT_CACHE.ts = Date.now();
+    return price;
+  } catch {
+    return 1.0;
+  }
+}
+
+async function updatePriceHint() {
+  const hint = document.querySelector('#priceHint');
+  if (!hint) return;
+  const price = await fetchStablecoinPrice();
+  hint.textContent = `1 USDC ≈ 1 USDT ≈ NT$ ${(price * 32).toFixed(1)}`;
+}
+
 function formPayload() {
   const data = new FormData(form);
   return {
     item: data.get('item'),
     description: data.get('description'),
     amount_usdc: data.get('amount'),
-    currency: 'USDC',
+    currency: data.get('currency') || 'USDC',
     ship_by: data.get('shipBy'),
     inspect: data.get('inspect'),
     method: data.get('method'),
@@ -132,6 +156,7 @@ form.addEventListener('submit', async (event) => {
 
 form.addEventListener('input', renderPreview);
 renderPreview();
+updatePriceHint();
 
 
 const feedbackForm = document.querySelector('#feedbackForm');
