@@ -2,6 +2,7 @@
 const EVENTS = new Set(['funded', 'shipped', 'delivered', 'buyer_confirmed', 'dispute_opened', 'released', 'refunded', 'note']);
 const METHODS = new Set(['寄送', '面交', '宅配', '超商', '其他']);
 const INSPECT_WINDOWS = new Set(['24 小時', '48 小時', '72 小時']);
+const CARRIERS = new Set(['7-11 店到店', '全家店到店', '萊爾富店到店', '中華郵政', '黑貓宅急便', '宅配通', '面交/自取', '其他']);
 const CODE_PATTERN = /^(pub|seller|buyer)_[a-f0-9]{24}$/;
 const MAX_JSON_BYTES = 4096;
 const RATE_LIMITS = {
@@ -11,6 +12,8 @@ const RATE_LIMITS = {
   readGlobal: { limit: 240, windowSeconds: 5 * 60 },
   addEvent: { limit: 30, windowSeconds: 15 * 60 },
   feedback: { limit: 20, windowSeconds: 24 * 60 * 60 },
+  addShipping: { limit: 10, windowSeconds: 60 * 60 },
+  addVerification: { limit: 10, windowSeconds: 60 * 60 },
 };
 const HIGH_RISK_TERMS = ['票券', '禮品卡', '點數', '遊戲幣', '帳號', '精品', '代儲', '金融', '投資', '虛擬帳戶', '門號'];
 const MAX_EVENTS_PER_DEAL = 40;
@@ -203,7 +206,9 @@ async function createDeal(request, env) {
   if (turnstileError) return turnstileError;
 
   const item = cleanText(body.item, 120);
+  const description = cleanText(body.description, 500);
   const amount = validateAmount(body.amount_usdc || body.amount);
+  const currency = cleanText(body.currency, 10) || 'USDC';
   const method = cleanChoice(body.method, METHODS, '寄送');
   const shipBy = cleanText(body.ship_by || body.shipBy, 40) || '48 小時內';
   const inspect = cleanChoice(body.inspect, INSPECT_WINDOWS, '48 小時');
@@ -225,14 +230,14 @@ async function createDeal(request, env) {
   const risk = riskReview({ item, amount, method });
 
   await env.DB.prepare(`
-    INSERT INTO deals (id, public_code, seller_code, buyer_code, item, amount_usdc, method, ship_by, inspect, status, seller_contact, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'created', ?, ?, ?)
-  `).bind(dealId, publicCode, sellerCode, buyerCode, item, amount, method, shipBy, inspect, sellerContact, now, now).run();
+    INSERT INTO deals (id, public_code, seller_code, buyer_code, item, description, amount_usdc, currency, method, ship_by, inspect, status, seller_contact, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'created', ?, ?, ?)
+  `).bind(dealId, publicCode, sellerCode, buyerCode, item, description, amount, currency, method, shipBy, inspect, sellerContact, now, now).run();
 
   await env.DB.prepare(`INSERT INTO deal_events (id, deal_id, type, actor, note, created_at) VALUES (?, ?, 'created', 'seller', ?, ?)`).bind(id('evt'), dealId, `建立交易：${item}`, now).run();
 
   return json({
-    deal: { id: dealId, public_code: publicCode, status: 'created', item, amount_usdc: amount, method, ship_by: shipBy, inspect },
+    deal: { id: dealId, public_code: publicCode, status: 'created', item, description, amount_usdc: amount, currency, method, ship_by: shipBy, inspect },
     risk,
     links: {
       public: `/deal.html?code=${publicCode}`,
@@ -252,10 +257,12 @@ async function getDeal(request, env, code, applyLimit = true) {
     if (globalLimited) return globalLimited;
   }
 
-  const deal = await env.DB.prepare('SELECT id, public_code, item, amount_usdc, method, ship_by, inspect, status, created_at, updated_at FROM deals WHERE public_code = ?').bind(publicCode).first();
+  const deal = await env.DB.prepare('SELECT id, public_code, item, description, amount_usdc, currency, method, ship_by, inspect, status, seller_code, buyer_code, created_at, updated_at FROM deals WHERE public_code = ?').bind(publicCode).first();
   if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
   const events = await env.DB.prepare('SELECT type, actor, note, created_at FROM deal_events WHERE deal_id = ? ORDER BY created_at ASC').bind(deal.id).all();
-  return json({ deal, events: events.results || [] }, 200, cors(request, env));
+  const shipping = await env.DB.prepare('SELECT carrier, tracking_number, shipped_at, delivered_at FROM shipping WHERE deal_id = ?').bind(deal.id).first();
+  const verifications = await env.DB.prepare('SELECT check_type, provider, score, verdict, created_at FROM verifications WHERE deal_id = ? ORDER BY created_at ASC').bind(deal.id).all();
+  return json({ deal, events: events.results || [], shipping: shipping || null, verifications: verifications.results || [] }, 200, cors(request, env));
 }
 
 async function getMetrics(request, env) {
@@ -366,6 +373,94 @@ async function addEvent(request, env, code) {
   return getDeal(request, env, publicCode, false);
 }
 
+async function addShipping(request, env, code) {
+  const publicCode = cleanCode(code);
+  if (!publicCode || !publicCode.startsWith('pub_')) return json({ error: 'invalid_code' }, 400, cors(request, env));
+  const limited = await rateLimit(request, env, 'addShipping', publicCode);
+  if (limited) return limited;
+
+  const body = await readJson(request);
+  if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
+
+  const token = cleanCode(body.token);
+  const deal = await env.DB.prepare('SELECT id, seller_code, status FROM deals WHERE public_code = ?').bind(publicCode).first();
+  if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
+  if (!token || token !== deal.seller_code) return json({ error: 'seller_token_required' }, 403, cors(request, env));
+
+  const carrier = cleanChoice(body.carrier, CARRIERS, '其他');
+  const trackingNumber = cleanText(body.tracking_number, 60);
+  if (!trackingNumber.length) return json({ error: 'tracking_number_required' }, 400, cors(request, env));
+
+  const now = new Date().toISOString();
+  const existing = await env.DB.prepare('SELECT id FROM shipping WHERE deal_id = ?').bind(deal.id).first();
+  if (existing) {
+    await env.DB.prepare('UPDATE shipping SET carrier = ?, tracking_number = ?, shipped_at = ? WHERE deal_id = ?').bind(carrier, trackingNumber, now, deal.id).run();
+  } else {
+    await env.DB.prepare('INSERT INTO shipping (id, deal_id, carrier, tracking_number, shipped_at, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(id('ship'), deal.id, carrier, trackingNumber, now, now).run();
+  }
+
+  if (['created', 'funded'].includes(deal.status)) {
+    await env.DB.prepare('UPDATE deals SET status = ?, updated_at = ? WHERE id = ?').bind('shipped', now, deal.id).run();
+    await env.DB.prepare("INSERT INTO deal_events (id, deal_id, type, actor, note, created_at) VALUES (?, ?, 'shipped', 'seller', ?, ?)").bind(id('evt'), deal.id, `已出貨：${carrier} ${trackingNumber}`, now).run();
+  }
+
+  const shipping = await env.DB.prepare('SELECT carrier, tracking_number, shipped_at, delivered_at FROM shipping WHERE deal_id = ?').bind(deal.id).first();
+  return json({ ok: true, shipping }, 200, cors(request, env));
+}
+
+async function addVerification(request, env, code) {
+  const publicCode = cleanCode(code);
+  if (!publicCode || !publicCode.startsWith('pub_')) return json({ error: 'invalid_code' }, 400, cors(request, env));
+  const limited = await rateLimit(request, env, 'addVerification', publicCode);
+  if (limited) return limited;
+
+  const body = await readJson(request);
+  if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
+
+  const token = cleanCode(body.token);
+  const deal = await env.DB.prepare('SELECT id, seller_code, item, description FROM deals WHERE public_code = ?').bind(publicCode).first();
+  if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
+  if (!token || token !== deal.seller_code) return json({ error: 'seller_token_required' }, 403, cors(request, env));
+
+  const checkType = cleanText(body.check_type, 20);
+  if (!['pre_shipment', 'post_receipt'].includes(checkType)) return json({ error: 'invalid_check_type' }, 400, cors(request, env));
+  const photoUrl = cleanText(body.photo_url, 500);
+  if (!photoUrl.length) return json({ error: 'photo_url_required' }, 400, cors(request, env));
+
+  let score = 50;
+  let verdict = 'pending';
+  let result = {};
+
+  try {
+    const description = deal.description || deal.item;
+    const aiPrompt = `You are a secondhand goods verification assistant. Compare the product description with the uploaded photo.\n\nProduct: ${description}\nPhoto URL: ${photoUrl}\n\nRespond ONLY with a JSON object (no markdown): { "object_detected": "string", "color_match_score": 0-100, "visible_damage": "string or null", "description_consistency": "pass|warn|fail", "overall_score": 0-100, "verdict": "pass|warn|fail", "warnings": ["string"] }`;
+
+    const aiResponse = await env.AI.run('@cf/meta/llama-3.2-11b-vision-instruct', {
+      messages: [{ role: 'user', content: [{ type: 'image', image: photoUrl }, { type: 'text', text: aiPrompt }] }],
+      max_tokens: 512,
+    });
+
+    const rawText = aiResponse?.response || aiResponse?.choices?.[0]?.message?.content || '';
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      result = JSON.parse(jsonMatch[0]);
+      score = Number(result.overall_score) || 50;
+      verdict = result.verdict || (score >= 70 ? 'pass' : score >= 40 ? 'warn' : 'fail');
+    } else {
+      result = { raw_response: rawText, parse_failed: true };
+      verdict = 'error';
+    }
+  } catch (aiError) {
+    result = { error: String(aiError) };
+    verdict = 'error';
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.prepare('INSERT INTO verifications (id, deal_id, check_type, provider, result_json, score, verdict, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id('vr'), deal.id, checkType, 'cloudflare', JSON.stringify(result), score, verdict, now).run();
+
+  return json({ ok: true, verification: { check_type: checkType, score, verdict, result } }, 200, cors(request, env));
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -377,6 +472,12 @@ export default {
     if (url.pathname === '/api/deals' && request.method === 'POST') return createDeal(request, env);
     if (url.pathname === '/api/feedback' && request.method === 'POST') return createFeedback(request, env);
     if (url.pathname === '/api/metrics' && request.method === 'GET') return getMetrics(request, env);
+
+    const shippingMatch = url.pathname.match(/^\/api\/deals\/([^/]+)\/shipping$/);
+    if (shippingMatch && request.method === 'POST') return addShipping(request, env, shippingMatch[1]);
+
+    const verifyMatch = url.pathname.match(/^\/api\/deals\/([^/]+)\/verify$/);
+    if (verifyMatch && request.method === 'POST') return addVerification(request, env, verifyMatch[1]);
 
     const match = url.pathname.match(/^\/api\/deals\/([^/]+)(?:\/events)?$/);
     if (match && request.method === 'GET') return getDeal(request, env, match[1]);

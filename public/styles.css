@@ -249,6 +249,13 @@ body::after { left: -150px; bottom: 90px; background: radial-gradient(circle, #f
 .field-note { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; }
 @media (max-width: 560px) { .package-grid { grid-template-columns: 1fr; } }
 
+/* Turnstile widget spacing */
+.cf-turnstile { margin: 4px 0 2px; }
+
+/* Shipping & verification cards */
+.shipping-card, .verify-card, .shipping-form-card, .verify-form-card { margin-top: 16px; }
+.shipping-card h3, .verify-card h3, .shipping-form-card h3, .verify-form-card h3 { margin-bottom: 12px; }
+
 .identity-safety { background: linear-gradient(135deg, rgba(23,33,27,.96), rgba(15,95,62,.9)); color: #fff; border-radius: 36px; }
 .identity-safety .eyebrow { color: #9ee0bf; }
 .identity-safety p { color: rgba(255,255,255,.72); line-height: 1.75; }

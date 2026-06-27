@@ -43,7 +43,9 @@ function formPayload() {
   const data = new FormData(form);
   return {
     item: data.get('item'),
+    description: data.get('description'),
     amount_usdc: data.get('amount'),
+    currency: 'USDC',
     ship_by: data.get('shipBy'),
     inspect: data.get('inspect'),
     method: data.get('method'),
@@ -58,7 +60,8 @@ function renderPreview() {
   previewBox.innerHTML = `
     <div class="preview-card">
       <div class="preview-row"><strong>商品</strong><span>${escapeHtml(payload.item)}</span></div>
-      <div class="preview-row"><strong>約定金額</strong><span>${formatAmount(payload.amount_usdc)}</span></div>
+      <div class="preview-row"><strong>約定金額</strong><span>${formatAmount(payload.amount_usdc)} ${escapeHtml(payload.currency || 'USDC')}</span></div>
+      <div class="preview-row"><strong>商品描述</strong><span>${escapeHtml(payload.description || '尚未填寫')}</span></div>
       <div class="preview-row"><strong>MVP 費用</strong><span>${formatAmount(fee)}（目前不收取）</span></div>
       <div class="preview-row"><strong>出貨期限</strong><span>${escapeHtml(payload.ship_by)}</span></div>
       <div class="preview-row"><strong>驗收期</strong><span>${escapeHtml(payload.inspect)}</span></div>
@@ -96,6 +99,7 @@ function renderCreated(data) {
   previewBox.innerHTML = `
     <div class="preview-card created-card">
       <div class="preview-row"><strong>交易已建立</strong><span>${escapeHtml(data.deal.public_code)}</span></div>
+      <div class="preview-row"><strong>約定金額</strong><span>${formatAmount(data.deal.amount_usdc)} ${escapeHtml(data.deal.currency || 'USDC')}</span></div>
       <div class="preview-row"><strong>公開狀態頁</strong><span><a href="${escapeAttr(publicUrl)}">打開</a></span></div>
       <div class="preview-row"><strong>賣方管理連結</strong><span><button class="copy-link" data-copy="${escapeAttr(sellerUrl)}">複製</button></span></div>
       <div class="preview-row"><strong>買方操作連結</strong><span><button class="copy-link" data-copy="${escapeAttr(buyerUrl)}">複製</button></span></div>
