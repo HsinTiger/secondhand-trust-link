@@ -529,6 +529,8 @@ export default {
     if (url.pathname === '/api/feedback' && request.method === 'POST') return createFeedback(request, env);
     if (url.pathname === '/api/metrics' && request.method === 'GET') return getMetrics(request, env);
 
+    if (/\.(?:md|sql|csv)$/i.test(url.pathname)) return json({ error: 'not_found' }, 404, headers);
+
     const shippingMatch = url.pathname.match(/^\/api\/deals\/([^/]+)\/shipping$/);
     if (shippingMatch && request.method === 'POST') return addShipping(request, env, shippingMatch[1]);
 
