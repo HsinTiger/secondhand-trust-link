@@ -257,7 +257,7 @@ async function getDeal(request, env, code, applyLimit = true) {
     if (globalLimited) return globalLimited;
   }
 
-  const deal = await env.DB.prepare('SELECT id, public_code, item, description, amount_usdc, currency, method, ship_by, inspect, status, seller_code, buyer_code, created_at, updated_at FROM deals WHERE public_code = ?').bind(publicCode).first();
+  const deal = await env.DB.prepare('SELECT id, public_code, item, description, amount_usdc, currency, method, ship_by, inspect, status, created_at, updated_at FROM deals WHERE public_code = ?').bind(publicCode).first();
   if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
   const events = await env.DB.prepare('SELECT type, actor, note, created_at FROM deal_events WHERE deal_id = ? ORDER BY created_at ASC').bind(deal.id).all();
   const shipping = await env.DB.prepare('SELECT carrier, tracking_number, shipped_at, delivered_at FROM shipping WHERE deal_id = ?').bind(deal.id).first();
