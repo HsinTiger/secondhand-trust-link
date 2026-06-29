@@ -20,7 +20,7 @@ const MAX_EVENTS_PER_DEAL = 40;
 
 function securityHeaders() {
   return {
-    'content-security-policy': "default-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'",
+    'content-security-policy': "default-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; object-src 'none'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'",
     'referrer-policy': 'no-referrer',
     'x-content-type-options': 'nosniff',
     'x-frame-options': 'DENY',
@@ -116,9 +116,9 @@ function cleanChoice(value, choices, fallback) {
 
 function validateAmount(value) {
   const raw = String(value ?? '').trim();
-  if (!/^\d{1,4}(?:\.\d{1,2})?$/.test(raw)) return null;
+  if (!/^\d{1,7}(?:\.\d{1,2})?$/.test(raw)) return null;
   const amount = Number(raw);
-  if (!Number.isFinite(amount) || amount < 1 || amount > 1000) return null;
+  if (!Number.isFinite(amount) || amount < 1 || amount > 1000000) return null;
   return amount.toFixed(2);
 }
 
@@ -171,11 +171,11 @@ function riskReview({ item, amount, method }) {
   const lowerItem = item.toLowerCase();
   const hits = HIGH_RISK_TERMS.filter((term) => lowerItem.includes(term.toLowerCase()));
   if (hits.length) warnings.push(`商品描述含高風險字詞：${hits.join('、')}。建議暫停交易或要求更多證據。`);
-  if (Number(amount) >= 300) warnings.push('金額較高，建議賣方提供序號/實拍照，買方保留開箱影片。');
+  if (Number(amount) >= 10000) warnings.push('金額較高，建議賣方提供序號/實拍照，買方保留開箱影片。');
   if (/iphone|手機|相機|鏡頭|筆電|顯卡|3c/i.test(item)) warnings.push('二手 3C 建議要求序號照片、外觀瑕疵照與開箱影片。');
   if (method.includes('面交')) warnings.push('面交建議約公開場所，事前寫清楚時間、地點、驗貨方式。');
   if (!warnings.length) warnings.push('目前未命中高風險規則；仍建議保留出貨與驗收證據。');
-  return { level: hits.length || Number(amount) >= 300 ? 'medium' : 'low', warnings };
+  return { level: hits.length || Number(amount) >= 10000 ? 'medium' : 'low', warnings };
 }
 
 function prohibitedTerms(item) {
@@ -208,14 +208,14 @@ async function createDeal(request, env) {
   const item = cleanText(body.item, 120);
   const description = cleanText(body.description, 500);
   const amount = validateAmount(body.amount_usdc || body.amount);
-  const currency = cleanText(body.currency, 10) || 'USDC';
+  const currency = cleanText(body.currency, 10) || 'TWD';
   const method = cleanChoice(body.method, METHODS, '寄送');
   const shipBy = cleanText(body.ship_by || body.shipBy, 40) || '48 小時內';
   const inspect = cleanChoice(body.inspect, INSPECT_WINDOWS, '48 小時');
   const sellerContact = cleanText(body.seller_contact, 120);
 
   if (item.length < 2 || !amount) {
-    return json({ error: 'invalid_deal', message: 'item and amount_usdc 1-1000 are required' }, 400, cors(request, env));
+    return json({ error: 'invalid_deal', message: 'item and amount 1-1000000 are required' }, 400, cors(request, env));
   }
   const prohibited = prohibitedTerms(item);
   if (prohibited.length) {
@@ -418,47 +418,11 @@ async function addVerification(request, env, code) {
   if (!body || Array.isArray(body)) return json({ error: 'invalid_json' }, 400, cors(request, env));
 
   const token = cleanCode(body.token);
-  const deal = await env.DB.prepare('SELECT id, seller_code, item, description FROM deals WHERE public_code = ?').bind(publicCode).first();
+  const deal = await env.DB.prepare('SELECT id, seller_code FROM deals WHERE public_code = ?').bind(publicCode).first();
   if (!deal) return json({ error: 'not_found' }, 404, cors(request, env));
   if (!token || token !== deal.seller_code) return json({ error: 'seller_token_required' }, 403, cors(request, env));
 
-  const checkType = cleanText(body.check_type, 20);
-  if (!['pre_shipment', 'post_receipt'].includes(checkType)) return json({ error: 'invalid_check_type' }, 400, cors(request, env));
-  const photoUrl = cleanText(body.photo_url, 500);
-  if (!photoUrl.length) return json({ error: 'photo_url_required' }, 400, cors(request, env));
-
-  let score = 50;
-  let verdict = 'pending';
-  let result = {};
-
-  try {
-    const description = deal.description || deal.item;
-    const aiPrompt = `You are a secondhand goods verification assistant. Compare the product description with the uploaded photo.\n\nProduct: ${description}\nPhoto URL: ${photoUrl}\n\nRespond ONLY with a JSON object (no markdown): { "object_detected": "string", "color_match_score": 0-100, "visible_damage": "string or null", "description_consistency": "pass|warn|fail", "overall_score": 0-100, "verdict": "pass|warn|fail", "warnings": ["string"] }`;
-
-    const aiResponse = await env.AI.run('@cf/meta/llama-3.2-11b-vision-instruct', {
-      messages: [{ role: 'user', content: [{ type: 'image', image: photoUrl }, { type: 'text', text: aiPrompt }] }],
-      max_tokens: 512,
-    });
-
-    const rawText = aiResponse?.response || aiResponse?.choices?.[0]?.message?.content || '';
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      result = JSON.parse(jsonMatch[0]);
-      score = Number(result.overall_score) || 50;
-      verdict = result.verdict || (score >= 70 ? 'pass' : score >= 40 ? 'warn' : 'fail');
-    } else {
-      result = { raw_response: rawText, parse_failed: true };
-      verdict = 'error';
-    }
-  } catch (aiError) {
-    result = { error: String(aiError) };
-    verdict = 'error';
-  }
-
-  const now = new Date().toISOString();
-  await env.DB.prepare('INSERT INTO verifications (id, deal_id, check_type, provider, result_json, score, verdict, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id('vr'), deal.id, checkType, 'cloudflare', JSON.stringify(result), score, verdict, now).run();
-
-  return json({ ok: true, verification: { check_type: checkType, score, verdict, result } }, 200, cors(request, env));
+  return json({ error: 'verification_disabled', message: 'AI 驗證仍在內測，MVP 目前只提供人工證據檢查清單。' }, 503, cors(request, env));
 }
 
 async function addBuyerInfo(request, env, code) {

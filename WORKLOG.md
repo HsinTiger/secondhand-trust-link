@@ -1,3 +1,11 @@
+
+## 2026-06-29 PM 收斂註記
+
+- 首頁與建單流程已降級為「台幣約定金額 + 付款方式備註」，不再主打 USDC/USDT 或匯率提示。
+- AI 驗證入口已從交易頁隱藏，API 明確回 `verification_disabled`；MVP 改用人工證據檢查清單。
+- D1 migration 已改成可重放鏈：舊 `0001` 不再新增欄位，`0004` 補上 description/currency。
+- 公開 API 不再回傳 seller/buyer token，public 靜態站不再公開內部 handoff / migration / strategy 文件。
+
 # 二手安心交易 Worklog
 
 **專案：** secondhand-trust-link

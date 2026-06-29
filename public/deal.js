@@ -69,26 +69,12 @@ function renderShippingForm() {
 
 function renderVerifySection(verifications) {
   if (!verifications || !verifications.length) return '';
-  const badges = verifications.map((v) => {
-    const icon = v.verdict === 'pass' ? '✅' : v.verdict === 'warn' ? '⚠️' : v.verdict === 'fail' ? '❌' : '⏳';
-    const label = v.verdict === 'pass' ? '驗證通過' : v.verdict === 'warn' ? '注意' : v.verdict === 'fail' ? '驗證失敗' : '待審查';
-    return `<div class="preview-row"><strong>${icon} ${v.check_type === 'pre_shipment' ? '出貨前驗證' : '收貨驗證'}</strong><span>${label}（分數：${v.score}）</span></div>`;
-  }).join('');
-  return `<div class="preview-card verify-card"><h3>AI 驗證結果</h3>${badges}</div>`;
+  const rows = verifications.map((v) => '<div class="preview-row"><strong>檢查紀錄</strong><span>' + escapeHtml(v.verdict) + '（' + escapeHtml(v.created_at) + '）</span></div>').join('');
+  return '<div class="preview-card verify-card"><h3>輔助檢查紀錄</h3><p class="preview-note">此功能仍在內測，不作為真假或責任判定。</p>' + rows + '</div>';
 }
 
 function renderVerifyForm() {
-  if (role !== 'seller' || !token) return '';
-  return `
-    <div class="preview-card verify-form-card">
-      <h3>📷 出貨前 AI 驗證</h3>
-      <p class="preview-note">上傳商品照片，AI 將自動比對描述與商品狀況。</p>
-      <form id="verifyForm" class="deal-form">
-        <label>商品照片 URL<input name="photo_url" type="url" required placeholder="https://..." /></label>
-        <button class="button primary" type="submit">開始 AI 驗證</button>
-        <p id="verifyStatus" class="preview-note" aria-live="polite"></p>
-      </form>
-    </div>`;
+  return '';
 }
 
 function renderPickupInfo(pickup) {
@@ -150,7 +136,7 @@ function render(data) {
       <span class="pill success">${escapeHtml(statusLabels[deal.status] || deal.status)}</span>
       <strong>${escapeHtml(deal.item)}</strong>
     </div>
-    <div class="amount">${escapeHtml(deal.amount_usdc)} ${escapeHtml(deal.currency || 'USDC')}</div>
+    <div class="amount">NT$ ${escapeHtml(deal.amount_usdc)}</div>
     <p class="risk-box"><strong>MVP 提醒：</strong>本服務目前不收款、不保管資金、不保證交易結果；此頁只做條件與證據流程紀錄。</p>
     <div class="preview-card">
       <div class="preview-row"><strong>交易方式</strong><span>${escapeHtml(deal.method)}</span></div>
@@ -213,31 +199,7 @@ function bindShippingForm() {
 }
 
 function bindVerifyForm() {
-  const form = document.querySelector('#verifyForm');
-  if (!form) return;
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const btn = form.querySelector('button[type="submit"]');
-    const status = document.querySelector('#verifyStatus');
-    btn.disabled = true;
-    btn.textContent = '驗證中...';
-    try {
-      const data = new FormData(form);
-      const result = await api(`/api/deals/${encodeURIComponent(code)}/verify`, {
-        method: 'POST',
-        body: JSON.stringify({ token, check_type: 'pre_shipment', photo_url: data.get('photo_url') }),
-      });
-      const v = result.verification;
-      const icon = v.verdict === 'pass' ? '✅' : v.verdict === 'warn' ? '⚠️' : '❌';
-      status.textContent = `${icon} AI 驗證完成：${v.verdict}（分數：${v.score}）`;
-      load();
-    } catch (error) {
-      status.textContent = `驗證失敗：${error.message}`;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '開始 AI 驗證';
-    }
-  });
+  return;
 }
 
 function bindPickupForm() {

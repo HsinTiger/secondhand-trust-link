@@ -40,54 +40,9 @@ function packageText(payload) {
 }
 
 // ─── Stablecoin + NTD price feed ─────────────────────────────────────
-const PRICE_CACHE = { usdc: 1.0, usdt: 1.0, ntdPerUsd: 32.0, ts: 0 };
-const CACHE_TTL = 5 * 60 * 1000; // 5 min
-
-async function fetchPrices() {
-  if (Date.now() - PRICE_CACHE.ts < CACHE_TTL && PRICE_CACHE.ntdPerUsd > 0) return PRICE_CACHE;
-
-  // Source 1: CoinGecko — USDC & USDT vs USD
-  try {
-    const cg = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether,usd-coin&vs_currencies=usd');
-    const data = await cg.json();
-    if (data['usd-coin']?.usd) PRICE_CACHE.usdc = data['usd-coin'].usd;
-    if (data['tether']?.usd)  PRICE_CACHE.usdt = data['tether'].usd;
-  } catch {}
-
-  // Source 2: 台灣銀行 — USD/NTD spot rate (本行買入 + 賣出平均)
-  try {
-    const resp = await fetch('https://rate.bot.com.tw/xrt/flCSV/0/day?Lang=zh-TW');
-    const csv = await resp.text();
-    // CSV format: 幣別,現金買入,現金賣出,即期買入,即期賣出
-    const lines = csv.split('\n');
-    const usdLine = lines.find(l => l.includes('USD') || l.includes('美金'));
-    if (usdLine) {
-      const cols = usdLine.split(',');
-      // 即期買入 is usually index 2, 即期賣出 index 3
-      const buy = parseFloat(cols[2]);
-      const sell = parseFloat(cols[3]);
-      if (buy > 0 && sell > 0) PRICE_CACHE.ntdPerUsd = (buy + sell) / 2;
-    }
-  } catch {
-    // Fallback: try Google Finance via CoinGecko fallback
-    try {
-      const resp2 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd');
-      const d2 = await resp2.json();
-      // If CoinGecko gives us USDT/USD, use it to infer NTD from a known rate
-      // At this point we keep the old ntdPerUsd value
-    } catch {}
-  }
-
-  PRICE_CACHE.ts = Date.now();
-  return PRICE_CACHE;
-}
-
-async function updatePriceHint() {
+function updatePriceHint() {
   const hint = document.querySelector('#priceHint');
-  if (!hint) return;
-  const { usdc, usdt, ntdPerUsd } = await fetchPrices();
-  const ntdPerCoin = (usdc * ntdPerUsd).toFixed(1);
-  hint.textContent = `1 USDC ≈ NT$ ${ntdPerCoin} ｜ 1 USDT ≈ NT$ ${(usdt * ntdPerUsd).toFixed(1)} ｜ 匯率來源：台灣銀行 + CoinGecko`;
+  if (hint) hint.textContent = '只記錄雙方約定金額；付款方式由買賣雙方自行決定。';
 }
 
 function formPayload() {
@@ -96,7 +51,7 @@ function formPayload() {
     item: data.get('item'),
     description: data.get('description'),
     amount_usdc: data.get('amount'),
-    currency: data.get('currency') || 'USDC',
+    currency: 'TWD',
     ship_by: data.get('shipBy'),
     inspect: data.get('inspect'),
     method: data.get('method'),
@@ -111,7 +66,7 @@ function renderPreview() {
   previewBox.innerHTML = `
     <div class="preview-card">
       <div class="preview-row"><strong>商品</strong><span>${escapeHtml(payload.item)}</span></div>
-      <div class="preview-row"><strong>約定金額</strong><span>${formatAmount(payload.amount_usdc)} ${escapeHtml(payload.currency || 'USDC')}</span></div>
+      <div class="preview-row"><strong>約定金額</strong><span>NT$ ${formatAmount(payload.amount_usdc)}</span></div>
       <div class="preview-row"><strong>商品描述</strong><span>${escapeHtml(payload.description || '尚未填寫')}</span></div>
       <div class="preview-row"><strong>MVP 費用</strong><span>${formatAmount(fee)}（目前不收取）</span></div>
       <div class="preview-row"><strong>出貨期限</strong><span>${escapeHtml(payload.ship_by)}</span></div>
@@ -150,7 +105,7 @@ function renderCreated(data) {
   previewBox.innerHTML = `
     <div class="preview-card created-card">
       <div class="preview-row"><strong>交易已建立</strong><span>${escapeHtml(data.deal.public_code)}</span></div>
-      <div class="preview-row"><strong>約定金額</strong><span>${formatAmount(data.deal.amount_usdc)} ${escapeHtml(data.deal.currency || 'USDC')}</span></div>
+      <div class="preview-row"><strong>約定金額</strong><span>NT$ ${formatAmount(data.deal.amount_usdc)}</span></div>
       <div class="preview-row"><strong>公開狀態頁</strong><span><a href="${escapeAttr(publicUrl)}">打開</a></span></div>
       <div class="preview-row"><strong>賣方管理連結</strong><span><button class="copy-link" data-copy="${escapeAttr(sellerUrl)}">複製</button></span></div>
       <div class="preview-row"><strong>買方操作連結</strong><span><button class="copy-link" data-copy="${escapeAttr(buyerUrl)}">複製</button></span></div>

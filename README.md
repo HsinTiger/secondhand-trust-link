@@ -15,13 +15,13 @@ GitHub Pages 備援展示：`https://hsintiger.github.io/secondhand-trust-link/`
 目前版本包含：
 
 - Cloudflare Workers API + static assets。
-- D1 database：交易、事件、回饋、rate limit。
-- 建立交易連結與交易狀態頁。
+- D1 database：交易、事件、回饋、rate limit、物流、取貨資訊。
+- 建立交易連結與交易狀態頁，預設以新台幣約定金額呈現。
 - 建立交易後的風險提示：高單價、二手 3C、面交安全提醒。
 - 市場回饋表單：角色、使用情境、願付費訊號、聯絡方式。
 - LINE / Facebook 分享入口。
 - SEO 長尾指南頁、`sitemap.xml`、`robots.txt`。
-- 基本資安防護：安全標頭、輸入驗證、D1 rate limit、Turnstile 預留。
+- 基本資安防護：安全標頭、輸入驗證、D1 rate limit、Turnstile。
 
 ## Non-custodial boundaries
 
@@ -32,7 +32,7 @@ GitHub Pages 備援展示：`https://hsintiger.github.io/secondhand-trust-link/`
 - 保管、接收、池化或控制使用者資金或數位資產。
 - crypto swap、幣幣交換、法幣出入金。
 - 平台錢包、託管私鑰、帳號恢復服務。
-- 自動仲裁、保證退款、保證防詐。
+- AI 自動仲裁、保證退款、保證防詐。
 - 法律、稅務、金融、投資建議。
 
 ## Local development

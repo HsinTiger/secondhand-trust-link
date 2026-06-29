@@ -154,29 +154,27 @@
       <p class="preview-note center-note">MVP 階段不代寄、不保證物流時效；實際尺寸、重量、運費與禁運品仍以物流商公告為準。</p>
     </section>
 
-    <section id="demo" class="section demo-section">
+        <section id="demo" class="section demo-section">
       <div class="section-title">
         <p class="eyebrow">MVP Demo</p>
-        <h2>30 秒建立一筆交易條件連結。</h2>
-        <p>目前不收款、不保管資金，只產生雙方看得懂的流程與證據時間線。</p>
+        <h2>30 秒建立一條二手交易流程連結。</h2>
+        <p>目前不收款、不保管資金，只把商品條件、付款約定、物流證據、驗收期限與爭議紀錄整理成雙方都看得懂的時間線。</p>
       </div>
       <div class="demo-grid">
         <form id="dealForm" class="deal-form">
           <label>商品名稱<input name="item" value="二手 iPhone 15 128G" required /></label>
           <label>商品描述<textarea name="description" rows="3" placeholder="例如：iPhone 15 128G，太空黑，螢幕無刮傷，背板輕微磨損，含原廠充電線與盒子"></textarea></label>
-          <label>約定金額 (USDC / USDT)
-            <div class="amount-input-row">
-              <input name="amount" type="number" min="1" step="0.01" value="260" required />
-              <select name="currency"><option value="USDC" selected>USDC</option><option value="USDT">USDT</option></select>
-            </div>
-            <span class="price-hint" id="priceHint">≈ 載入匯率中...</span>
+          <label>約定金額（新台幣）
+            <input name="amount" type="number" min="1" step="1" value="3800" required />
+            <span class="price-hint" id="priceHint">只記錄雙方約定金額；付款方式由買賣雙方自行決定。</span>
           </label>
+          <label>付款方式備註<input name="paymentNote" placeholder="例如：面交現金、轉帳後寄出、其他雙方約定方式" /></label>
           <label>出貨期限<select name="shipBy"><option>24 小時內</option><option selected>48 小時內</option><option>3 天內</option></select></label>
-          <label>驗收期<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
-          <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>數位交付</option></select></label>
+          <label>驗收期限<select name="inspect"><option>24 小時</option><option selected>48 小時</option><option>72 小時</option></select></label>
+          <label>交易方式<select name="method"><option selected>寄送</option><option>面交</option><option>其他</option></select></label>
           <div class="form-subtitle">物流設定 MVP</div>
           <label>店到店物流<select name="shippingProvider"><option selected>7-11 店到店</option><option>全家店到店</option><option>萊爾富店到店</option><option>面交/自取</option><option>其他物流</option></select></label>
-          <label>運費誰付<select name="shippingFeePayer"><option selected>買方負擔</option><option>賣方負擔</option><option>雙方分攤</option></select></label>
+          <label>運費負擔<select name="shippingFeePayer"><option selected>買方負擔</option><option>賣方負擔</option><option>雙方分攤</option></select></label>
           <label>預估運費 NT$<input name="shippingFee" type="number" min="0" step="1" value="60" /></label>
           <div class="package-grid">
             <label>長 cm<input name="packageLength" type="number" min="0" step="0.1" placeholder="例如 30" /></label>
@@ -184,43 +182,42 @@
             <label>高 cm<input name="packageHeight" type="number" min="0" step="0.1" placeholder="例如 10" /></label>
             <label>重量 kg<input name="packageWeight" type="number" min="0" step="0.1" placeholder="例如 1.2" /></label>
           </div>
-          <p class="field-note">目前只做運費與規格提醒，不代寄、不取號；正式限制仍以物流商公告為準。</p>
+          <p class="field-note">目前只做條件、運費與規格提醒，不代寄、不取號；實際限制仍以物流商公告為準。</p>
           <div class="cf-turnstile" data-sitekey="0x4AAAAAADryFUGyHZ-B9lGh" data-callback="onTurnstileSuccess" data-theme="light"></div>
-          <button class="button primary" type="submit">產生預覽</button>
+          <button class="button primary" type="submit">建立交易連結</button>
         </form>
         <aside class="preview sticky-preview" aria-live="polite">
-          <h3>交易連結預覽</h3>
+          <h3>交易流程預覽</h3>
           <div id="previewBox"></div>
         </aside>
       </div>
     </section>
 
-
-
-    <section id="chain" class="section split chain-section">
+        <section id="chain" class="section split chain-section">
       <div>
-        <p class="eyebrow">流程保障白話化</p>
-        <h2>不用懂技術，也能看懂交易進度。</h2>
-        <p>使用者不需要理解底層技術，只需要看到清楚狀態：條件已建立、已出貨、驗收中、爭議中、已完成。未來若做付款功能，才會另行評估穩定幣支付與法遵邊界。</p>
+        <p class="eyebrow">透明流程，不碰資金</p>
+        <h2>先讓雙方知道現在走到哪一步。</h2>
+        <p>使用者不需要理解底層技術或金流術語，只需要看到清楚狀態：條件已建立、已出貨、驗收中、爭議中、已完成。MVP 階段只做流程紀錄，不處理付款、不保管資金。</p>
       </div>
       <div class="chain-card">
-        <div class="chain-row"><span>付款證明</span><strong>先紀錄付款方式與證據，不代收款</strong></div>
-        <div class="chain-row"><span>證據紀錄</span><strong>照片/影片保留在安全儲存，只公開必要摘要</strong></div>
-        <div class="chain-row"><span>完成規則</span><strong>先講清楚，到期照規則留下紀錄</strong></div>
+        <div class="chain-row"><span>公開頁</span><strong>商品條件、出貨期限、驗收期限</strong></div>
+        <div class="chain-row"><span>證據流</span><strong>物流單號、包裝留證、雙方事件紀錄</strong></div>
         <div class="chain-row"><span>平台角色</span><strong>不收款、不保管資金、不保證交易</strong></div>
+        <div class="chain-row"><span>未來可能</span><strong>等需求被驗證後，再評估付款與更進階風控</strong></div>
       </div>
     </section>
 
-    <section id="ai-review" class="section split muted">
+        <section id="ai-review" class="section split muted">
       <div>
-        <p class="eyebrow">AI 輔助，不取代仲裁</p>
-        <h2>先用便宜模型做風險提示，不做最終判決。</h2>
+        <p class="eyebrow">先做檢查清單，不急著做 AI 仲裁</p>
+        <h2>現階段要降低爭議，不是承諾自動判案。</h2>
+        <p>AI 驗證與自動仲裁會提高成本與責任邊界。MVP 先把雙方應該補齊的證據列清楚，等真實交易量夠了，再決定哪些地方值得自動化。</p>
       </div>
-      <ul class="deploy-list">
-        <li><strong>商品審查：</strong>偵測禁售品、高風險關鍵字、疑似仿冒或票券點數。</li>
-        <li><strong>證據整理：</strong>幫雙方把付款、出貨、開箱證據整理成時間線。</li>
-        <li><strong>爭議摘要：</strong>AI 只產生摘要與缺件提醒，最後仍由規則或人工判斷。</li>
-        <li><strong>低成本路線：</strong>先用 Cloudflare Workers AI、Groq 或 Hugging Face 類 API，必要時才升級。</li>
+      <ul class="feature-list">
+        <li><strong>出貨前：</strong>商品實拍、瑕疵照、序號或配件清單。</li>
+        <li><strong>寄送時：</strong>包裝照、封箱照、物流單號、寄件時間。</li>
+        <li><strong>驗收時：</strong>開箱影片、缺件紀錄、驗收期限。</li>
+        <li><strong>爭議時：</strong>時間線與證據摘要，協助雙方回到事實。</li>
       </ul>
     </section>
 
